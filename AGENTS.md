@@ -4,31 +4,75 @@
 
 ---
 
-# OpenCitizen AI - Project Rules & Guidelines
+# OpenCitizen AI Development Rules
 
-## Core Development Rules
-1. Work incrementally. Never build the entire application at once.
-2. Before changing files, inspect the current repository and explain the proposed change.
-3. Do not rewrite working code unnecessarily.
-4. Do not introduce technologies that are not part of the agreed architecture without explaining why.
-5. Prefer small, reviewable modules.
-6. Every completed atomic module must be tested before committing.
-7. After an atomic module is complete and tests pass:
-   - inspect git diff
-   - stage only the files belonging to that module
-   - create one Conventional Commit
-   - push the commit to the configured GitHub remote
-8. Do not make fake, backdated, or misleading commit dates. Commit using the actual current date/time.
-9. Never commit secrets, API keys, passwords, tokens, .env files containing secrets, or credentials.
-10. Never run destructive git commands such as reset --hard, clean -fd, force push, or deleting branches unless explicitly approved.
-11. Before every commit, show:
-    - files changed
-    - tests run
-    - commit message
-    - files that will be included in the commit
-12. Never combine unrelated features into one commit.
+## Engineering
+
+* Work incrementally.
+* Inspect existing code before modifying it.
+* Prefer small modules and clear separation of concerns.
+* Do not rewrite working code without a reason.
+* Do not introduce unnecessary dependencies.
+* Keep frontend, backend, data processing, retrieval, and infrastructure responsibilities separated.
+* Write tests for non-trivial functionality.
+* Prefer explicit, readable code over clever abstractions.
+
+## Git
+
+* Use Conventional Commits.
+* One atomic feature/fix/documentation module per commit.
+* Never mix unrelated changes in a commit.
+* Never create fake or backdated commits.
+* Use the actual current date/time.
+* Before committing, inspect `git diff` and `git status`.
+* Run relevant tests before committing.
+* Stage only files belonging to the completed module.
+* Push successful commits to the configured GitHub remote.
+* Never force-push.
+* Never use destructive reset/clean commands unless explicitly approved.
+
+## Commit format
+
+Use:
+type(scope): imperative description
+
+Examples:
+feat(search): add semantic document retrieval
+feat(analytics): add DuckDB query service
+fix(ingestion): handle malformed PDF
+test(rag): add citation retrieval tests
+docs(api): document query endpoint
+chore(ci): add backend test workflow
+
+## Security
+
+* Never commit .env files containing secrets.
+* Never commit API keys.
+* Never commit GitHub tokens.
+* Never commit passwords or credentials.
+* Never expose secrets in logs.
+* Never place secrets in source code.
+
+## Validation
+
+Before every commit:
+
+1. Check changed files.
+2. Run appropriate tests.
+3. Check for accidental secrets.
+4. Review the diff.
+5. Commit only the intended atomic module.
+6. Push to GitHub.
+7. Report commit hash and summary.
+
+## User approval
+
+For destructive commands, authentication changes, credential changes, database deletion, force pushes, or major architectural changes, stop and ask for approval.
+
+---
 
 ## Initial Architecture
+
 - **Frontend**: Next.js, TypeScript, Recharts
 - **Backend**: Python, FastAPI
 - **Application database**: PostgreSQL
