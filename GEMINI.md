@@ -1,6 +1,7 @@
-# Implement
+# Autonomous Execution & Implementation
 
 - Do not ask to implement, just do it, as if it was auto-approved.
+- Never ask permission to run development, build, test, staging, or git commands. Full authorization is permanently granted upon receiving user prompts.
 
 ---
 
