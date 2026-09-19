@@ -6,10 +6,6 @@ import pytest
 from app.main import app
 
 
-@pytest.fixture
-def client() -> TestClient:
-    """Provide TestClient fixture."""
-    return TestClient(app)
 
 
 def test_post_query_success(client: TestClient) -> None:

@@ -1,6 +1,9 @@
 """API routes for natural language queries and dual retrieval."""
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Depends, status
+from sqlalchemy.orm import Session
+
+from app.db.session import get_db
 from app.schemas.query import QueryRequest, QueryResponse
 from app.services.query_service import query_service
 
@@ -14,6 +17,9 @@ router = APIRouter(prefix="/query", tags=["Query"])
     summary="Submit natural language inquiry",
     description="Submit a question to be answered with evidence grounding via Qdrant semantic search and DuckDB SQL arithmetic.",
 )
-async def execute_query(payload: QueryRequest) -> QueryResponse:
-    """Execute evidence-grounded civic inquiry."""
-    return query_service.process_query(payload)
+async def execute_query(
+    payload: QueryRequest,
+    db: Session = Depends(get_db),
+) -> QueryResponse:
+    """Execute evidence-grounded civic inquiry and persist execution metadata."""
+    return query_service.process_query(payload, db=db)

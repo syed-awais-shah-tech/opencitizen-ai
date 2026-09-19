@@ -7,10 +7,7 @@ from app.core.errors import EntityNotFoundError, ValidationException
 from app.main import app
 
 
-@pytest.fixture
-def client() -> TestClient:
-    """Provide TestClient fixture."""
-    return TestClient(app)
+
 
 
 def test_404_not_found_handling(client: TestClient) -> None:

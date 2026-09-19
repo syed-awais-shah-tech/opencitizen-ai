@@ -6,10 +6,6 @@ import pytest
 from app.main import app
 
 
-@pytest.fixture
-def client() -> TestClient:
-    """Provide a TestClient fixture for endpoint requests."""
-    return TestClient(app)
 
 
 def test_root_endpoint(client: TestClient) -> None:

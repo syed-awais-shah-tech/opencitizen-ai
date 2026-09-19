@@ -1,7 +1,16 @@
 """Pydantic schemas package for OpenCitizen AI API."""
 
-from app.schemas.datasets import DatasetColumnSchema, DatasetItem, DatasetListResponse
-from app.schemas.documents import DocumentItem, DocumentListResponse
+from app.schemas.datasets import (
+    DatasetColumnSchema,
+    DatasetCreate,
+    DatasetItem,
+    DatasetListResponse,
+)
+from app.schemas.documents import (
+    DocumentCreate,
+    DocumentItem,
+    DocumentListResponse,
+)
 from app.schemas.query import (
     CalculationItem,
     CitationItem,
@@ -11,8 +20,10 @@ from app.schemas.query import (
 
 __all__ = [
     "DatasetColumnSchema",
+    "DatasetCreate",
     "DatasetItem",
     "DatasetListResponse",
+    "DocumentCreate",
     "DocumentItem",
     "DocumentListResponse",
     "QueryRequest",
