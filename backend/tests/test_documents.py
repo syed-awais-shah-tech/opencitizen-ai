@@ -66,3 +66,32 @@ def test_get_documents_invalid_pagination(client: TestClient) -> None:
     assert response.status_code == 422
     data = response.json()
     assert data["error_code"] == "REQUEST_VALIDATION_ERROR"
+
+
+def test_upload_pdf_document(client: TestClient) -> None:
+    """Ensure uploading a PDF document via multipart form processes chunks and persists document."""
+    from tests.pdf_helpers import create_test_pdf
+
+    pdf_bytes = create_test_pdf([
+        "Page 1: Annual financial statement for municipal services.",
+        "Page 2: Detailed revenue breakdown and property tax assessments.",
+    ])
+
+    files = {"file": ("annual_statement_2024.pdf", pdf_bytes, "application/pdf")}
+    data = {
+        "department": "Finance",
+        "category": "Budget",
+        "summary": "Annual revenue and tax collection overview.",
+    }
+
+    response = client.post("/api/v1/documents/upload", files=files, data=data)
+    assert response.status_code == 201
+    res_data = response.json()
+
+    assert res_data["total_pages"] == 2
+    assert res_data["processed_pages"] == 2
+    assert res_data["total_chunks"] >= 2
+    assert res_data["document"]["title"] == "annual_statement_2024.pdf"
+    assert res_data["document"]["department"] == "Finance"
+    assert res_data["document"]["page_count"] == 2
+

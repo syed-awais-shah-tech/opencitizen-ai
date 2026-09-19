@@ -10,6 +10,7 @@ from app.schemas.documents import (
     DocumentCreate,
     DocumentItem,
     DocumentListResponse,
+    UploadDocumentResponse,
 )
 from app.schemas.query import (
     CalculationItem,
@@ -26,6 +27,7 @@ __all__ = [
     "DocumentCreate",
     "DocumentItem",
     "DocumentListResponse",
+    "UploadDocumentResponse",
     "QueryRequest",
     "QueryResponse",
     "CitationItem",

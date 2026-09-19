@@ -45,3 +45,14 @@ class DocumentListResponse(BaseModel):
         default_factory=list, description="Collection of ingested documents"
     )
     total: int = Field(default=0, description="Total count of documents")
+
+
+class UploadDocumentResponse(BaseModel):
+    """Response returned upon successful PDF document ingestion and chunking."""
+
+    document: DocumentItem = Field(..., description="Persisted document entity")
+    total_pages: int = Field(..., description="Total pages in the PDF")
+    processed_pages: int = Field(..., description="Pages with extractable text")
+    total_chunks: int = Field(..., description="Total structured chunks created")
+    warnings: list[str] = Field(default_factory=list, description="Non-fatal parsing warnings")
+    processing_time_ms: float = Field(..., description="Ingestion latency in milliseconds")
