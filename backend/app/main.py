@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api import api_router
 from app.api.routes.health import router as health_router
 from app.core.config import settings
+from app.core.errors import setup_exception_handlers
 
 
 @asynccontextmanager
@@ -27,6 +28,9 @@ def create_application() -> FastAPI:
         description="Evidence-grounded civic intelligence platform backend API.",
         lifespan=lifespan,
     )
+
+    # Register centralized exception handlers
+    setup_exception_handlers(application)
 
     # CORS configuration
     application.add_middleware(

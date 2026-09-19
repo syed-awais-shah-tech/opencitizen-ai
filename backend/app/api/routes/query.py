@@ -1,0 +1,19 @@
+"""API routes for natural language queries and dual retrieval."""
+
+from fastapi import APIRouter, status
+from app.schemas.query import QueryRequest, QueryResponse
+from app.services.query_service import query_service
+
+router = APIRouter(prefix="/query", tags=["Query"])
+
+
+@router.post(
+    "",
+    response_model=QueryResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Submit natural language inquiry",
+    description="Submit a question to be answered with evidence grounding via Qdrant semantic search and DuckDB SQL arithmetic.",
+)
+async def execute_query(payload: QueryRequest) -> QueryResponse:
+    """Execute evidence-grounded civic inquiry."""
+    return query_service.process_query(payload)
