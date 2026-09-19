@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   description: "Question municipal documents, analyze civic datasets, and inspect the exact source citations and DuckDB calculations behind every answer.",
 };
 
+import AppLayout from "./components/AppLayout";
+
 export default function RootLayout({
   children,
 }: {
@@ -15,7 +17,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <div className="ambient-glow" />
-        {children}
+        <AppLayout>{children}</AppLayout>
       </body>
     </html>
   );

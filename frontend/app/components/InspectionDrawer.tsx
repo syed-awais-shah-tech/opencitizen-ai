@@ -2,22 +2,9 @@
 
 import React from "react";
 
-export interface CitationData {
-  documentTitle: string;
-  pageNumber: number;
-  similarityScore: number;
-  excerpt: string;
-  chunkId: string;
-}
+import { CitationData, CalculationData } from "../lib/mockData";
 
-export interface CalculationData {
-  query: string;
-  executionTimeMs: number;
-  rowsScanned: number;
-  tableName: string;
-  rawRows: Array<Record<string, string | number>>;
-  derivation: string;
-}
+export type { CitationData, CalculationData };
 
 interface InspectionDrawerProps {
   isOpen: boolean;

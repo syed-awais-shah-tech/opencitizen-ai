@@ -1,25 +1,31 @@
 "use client";
 
 import React from "react";
+import { DatasetItem } from "../lib/mockData";
 
-export interface DatasetItem {
-  id: string;
-  name: string;
-  format: "CSV" | "XLSX";
-  rowCount: string;
-  columnsCount: number;
-  tableName: string;
-  status: "active" | "registered";
+export type { DatasetItem };
+
+interface DatasetCardProps {
+  dataset: DatasetItem;
+  onClick?: (dataset: DatasetItem) => void;
 }
 
-export default function DatasetCard({ dataset }: { dataset: DatasetItem }) {
+export default function DatasetCard({ dataset, onClick }: DatasetCardProps) {
   return (
-    <div className="glass-card interactive-card" style={{ padding: "16px", marginBottom: "12px" }}>
+    <div
+      className="glass-card interactive-card"
+      style={{
+        padding: "18px",
+        marginBottom: "12px",
+        cursor: onClick ? "pointer" : "default",
+      }}
+      onClick={() => onClick?.(dataset)}
+    >
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "10px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           <div style={{
-            width: "36px",
-            height: "36px",
+            width: "38px",
+            height: "38px",
             borderRadius: "8px",
             background: "rgba(16, 185, 129, 0.12)",
             border: "1px solid rgba(16, 185, 129, 0.3)",
@@ -27,6 +33,7 @@ export default function DatasetCard({ dataset }: { dataset: DatasetItem }) {
             alignItems: "center",
             justifyContent: "center",
             color: "var(--accent-emerald)",
+            flexShrink: 0,
           }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
@@ -37,18 +44,44 @@ export default function DatasetCard({ dataset }: { dataset: DatasetItem }) {
             </svg>
           </div>
           <div>
-            <div style={{ fontSize: "0.92rem", fontWeight: 600, color: "var(--text-primary)" }}>
+            <div style={{ fontSize: "0.94rem", fontWeight: 600, color: "var(--text-primary)" }}>
               {dataset.name}
             </div>
             <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "2px", fontFamily: "var(--font-mono)" }}>
-              table: {dataset.tableName}
+              table: <span style={{ color: "var(--accent-cyan)" }}>{dataset.tableName}</span> • {dataset.size}
             </div>
           </div>
         </div>
 
-        <span className="badge badge-purple" style={{ fontSize: "0.68rem" }}>
-          {dataset.format}
-        </span>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <span className="badge badge-purple" style={{ fontSize: "0.68rem" }}>
+            {dataset.format}
+          </span>
+          <span className="badge badge-emerald" style={{ fontSize: "0.68rem" }}>
+            <span className="badge-dot" />
+            {dataset.status.toUpperCase()}
+          </span>
+        </div>
+      </div>
+
+      {/* Columns Pills preview */}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginTop: "12px" }}>
+        {dataset.columns.map((col) => (
+          <span
+            key={col.name}
+            style={{
+              fontSize: "0.7rem",
+              fontFamily: "var(--font-mono)",
+              padding: "2px 8px",
+              borderRadius: "var(--radius-sm)",
+              background: "rgba(255, 255, 255, 0.04)",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+              color: "var(--text-secondary)",
+            }}
+          >
+            {col.name} <span style={{ color: "var(--accent-cyan)", fontSize: "0.65rem" }}>{col.type}</span>
+          </span>
+        ))}
       </div>
 
       <div style={{
@@ -68,7 +101,7 @@ export default function DatasetCard({ dataset }: { dataset: DatasetItem }) {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "4px", color: "var(--accent-cyan)", fontSize: "0.72rem" }}>
-          <span>DuckDB In-Process</span>
+          <span>DuckDB In-Process Engine</span>
         </div>
       </div>
     </div>

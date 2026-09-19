@@ -1,25 +1,31 @@
 "use client";
 
 import React from "react";
+import { DocumentItem } from "../lib/mockData";
 
-export interface DocumentItem {
-  id: string;
-  title: string;
-  pageCount: number;
-  chunkCount: number;
-  size: string;
-  status: "ready" | "processing" | "pending";
-  date: string;
+export type { DocumentItem };
+
+interface DocumentCardProps {
+  doc: DocumentItem;
+  onClick?: (doc: DocumentItem) => void;
 }
 
-export default function DocumentCard({ doc }: { doc: DocumentItem }) {
+export default function DocumentCard({ doc, onClick }: DocumentCardProps) {
   return (
-    <div className="glass-card interactive-card" style={{ padding: "16px", marginBottom: "12px" }}>
+    <div
+      className="glass-card interactive-card"
+      style={{
+        padding: "18px",
+        marginBottom: "12px",
+        cursor: onClick ? "pointer" : "default",
+      }}
+      onClick={() => onClick?.(doc)}
+    >
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "10px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           <div style={{
-            width: "36px",
-            height: "36px",
+            width: "38px",
+            height: "38px",
             borderRadius: "8px",
             background: "rgba(6, 182, 212, 0.12)",
             border: "1px solid rgba(6, 182, 212, 0.3)",
@@ -27,6 +33,7 @@ export default function DocumentCard({ doc }: { doc: DocumentItem }) {
             alignItems: "center",
             justifyContent: "center",
             color: "var(--accent-cyan)",
+            flexShrink: 0,
           }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -37,37 +44,61 @@ export default function DocumentCard({ doc }: { doc: DocumentItem }) {
             </svg>
           </div>
           <div>
-            <div style={{ fontSize: "0.92rem", fontWeight: 600, color: "var(--text-primary)" }}>
+            <div style={{ fontSize: "0.94rem", fontWeight: 600, color: "var(--text-primary)" }}>
               {doc.title}
             </div>
             <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "2px" }}>
-              {doc.size} • Uploaded {doc.date}
+              {doc.department} • {doc.size}
             </div>
           </div>
         </div>
 
-        <span className="badge badge-emerald" style={{ fontSize: "0.68rem" }}>
-          <span className="badge-dot" />
-          {doc.status.toUpperCase()}
-        </span>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <span className="badge badge-purple" style={{ fontSize: "0.68rem" }}>
+            {doc.category}
+          </span>
+          <span className="badge badge-emerald" style={{ fontSize: "0.68rem" }}>
+            <span className="badge-dot" />
+            {doc.status.toUpperCase()}
+          </span>
+        </div>
       </div>
+
+      <p style={{
+        fontSize: "0.82rem",
+        color: "var(--text-secondary)",
+        marginTop: "10px",
+        lineHeight: 1.5,
+        display: "-webkit-box",
+        WebkitLineClamp: 2,
+        WebkitBoxOrient: "vertical",
+        overflow: "hidden",
+      }}>
+        {doc.summary}
+      </p>
 
       <div style={{
         display: "flex",
         alignItems: "center",
-        gap: "10px",
+        justifyContent: "space-between",
         marginTop: "12px",
         paddingTop: "10px",
         borderTop: "1px solid var(--border-subtle)",
         fontSize: "0.75rem",
         color: "var(--text-secondary)",
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-          <span style={{ color: "var(--accent-cyan)", fontWeight: 600 }}>{doc.pageCount}</span> pages
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <div>
+            <span style={{ color: "var(--accent-cyan)", fontWeight: 600 }}>{doc.pageCount}</span> pages
+          </div>
+          <span>•</span>
+          <div>
+            <span style={{ color: "var(--accent-cyan)", fontWeight: 600 }}>{doc.chunkCount}</span> indexed chunks
+          </div>
         </div>
-        <span>•</span>
-        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-          <span style={{ color: "var(--accent-cyan)", fontWeight: 600 }}>{doc.chunkCount}</span> indexed chunks
+
+        <div style={{ color: "var(--text-muted)", fontSize: "0.72rem" }}>
+          Added {doc.date}
         </div>
       </div>
     </div>
