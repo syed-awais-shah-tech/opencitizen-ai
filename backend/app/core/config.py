@@ -33,6 +33,19 @@ class Settings(BaseSettings):
             f"{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
         )
 
+    # Vector Search & Qdrant settings
+    QDRANT_HOST: str = "localhost"
+    QDRANT_PORT: int = 6333
+    QDRANT_GRPC_PORT: int = 6334
+    QDRANT_API_KEY: str | None = None
+    QDRANT_COLLECTION_NAME: str = "opencitizen_documents"
+    QDRANT_URL: str | None = None
+    QDRANT_IN_MEMORY: bool = False
+
+    # Embedding settings
+    EMBEDDING_PROVIDER: str = "deterministic"
+    EMBEDDING_DIMENSION: int = 384
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
