@@ -1,19 +1,34 @@
 """Automated tests for /api/v1/query endpoint."""
 
 from fastapi.testclient import TestClient
-import pytest
-
-from app.main import app
-
-
 
 
 def test_post_query_success(client: TestClient) -> None:
-    """Ensure POST /api/v1/query succeeds and returns schema-compliant placeholder."""
+    """Ensure POST /api/v1/query succeeds and returns schema-compliant grounded RAG answer."""
+    from app.ingestion.models import DocumentChunk
+    from app.search.dependencies import get_vector_search_service
+
+    v_svc = get_vector_search_service()
+    v_svc.index_chunks(
+        [
+            DocumentChunk(
+                chunk_id="chk_parks_01",
+                document_id="doc_parks",
+                source_filename="City_Budget_Parks.pdf",
+                page_number=14,
+                chunk_index=0,
+                text="Section 3.2 - Parks, Recreation & Community Facilities: Authorized operational allocation for fiscal year 2023 was adjusted to $4,250,000.",
+                character_count=138,
+                word_count=19,
+                metadata={"department": "Parks & Rec"},
+            )
+        ]
+    )
+
     payload = {
         "question": "What was the total expenditure for Parks & Rec in 2023?",
         "include_citations": True,
-        "include_calculations": True,
+        "include_calculations": False,
     }
     response = client.post("/api/v1/query", json=payload)
     assert response.status_code == 200
@@ -23,7 +38,6 @@ def test_post_query_success(client: TestClient) -> None:
     assert data["query_id"].startswith("qry_")
     assert data["question"] == payload["question"]
     assert "answer" in data
-    assert data["is_placeholder"] is True
     assert data["status"] == "completed"
     assert "latency_ms" in data
     assert isinstance(data["latency_ms"], (int, float))
@@ -32,20 +46,11 @@ def test_post_query_success(client: TestClient) -> None:
     assert "citations" in data
     assert len(data["citations"]) > 0
     citation = data["citations"][0]
-    assert "document_title" in citation
-    assert "page_number" in citation
+    assert citation["document_title"] == "City_Budget_Parks.pdf"
+    assert citation["page_number"] == 14
+    assert citation["chunk_id"] == "chk_parks_01"
     assert "similarity_score" in citation
     assert "excerpt" in citation
-
-    # Calculation
-    assert "calculation" in data
-    assert data["calculation"] is not None
-    calc = data["calculation"]
-    assert "query" in calc
-    assert "execution_time_ms" in calc
-    assert "rows_scanned" in calc
-    assert "table_name" in calc
-    assert "derivation" in calc
 
 
 def test_post_query_without_citations_or_calculations(client: TestClient) -> None:

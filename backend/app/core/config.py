@@ -46,6 +46,15 @@ class Settings(BaseSettings):
     EMBEDDING_PROVIDER: str = "deterministic"
     EMBEDDING_DIMENSION: int = 384
 
+    # Gemini & AI Provider settings
+    GEMINI_API_KEY: str | None = None
+    GEMINI_MODEL: str = "gemini-1.5-flash"
+    LLM_PROVIDER: str = "mock"  # "gemini" or "mock"
+
+    # RAG Pipeline settings
+    RAG_TOP_K: int = 5
+    RAG_SCORE_THRESHOLD: float = 0.0
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

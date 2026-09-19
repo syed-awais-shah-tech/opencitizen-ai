@@ -11,7 +11,11 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 from qdrant_client import QdrantClient, models
-from qdrant_client.http.exceptions import UnexpectedResponse
+from qdrant_client.http.exceptions import (
+    ApiException,
+    ResponseHandlingException,
+    UnexpectedResponse,
+)
 
 from app.core.config import settings
 from app.ingestion.models import DocumentChunk
@@ -236,11 +240,19 @@ class QdrantVectorStore(BaseVectorStore):
         """Query Qdrant for semantically closest chunks, preserving metadata."""
         col_name = self._resolve_collection(collection_name)
 
-        # If collection does not exist, return empty results gracefully
+        # If collection does not exist or vector database is unreachable, return empty results gracefully
         try:
             if not self.client.collection_exists(collection_name=col_name):
                 return []
-        except (UnexpectedResponse, ValueError, RuntimeError, OSError):
+        except (
+            UnexpectedResponse,
+            ResponseHandlingException,
+            ApiException,
+            OSError,
+            RuntimeError,
+            ValueError,
+        ) as e:
+            logger.warning("Vector store unreachable or collection missing: %s", e)
             return []
 
         # Construct optional filter
@@ -265,7 +277,14 @@ class QdrantVectorStore(BaseVectorStore):
                 with_payload=True,
                 with_vectors=False,
             )
-        except UnexpectedResponse as e:
+        except (
+            UnexpectedResponse,
+            ResponseHandlingException,
+            ApiException,
+            OSError,
+            RuntimeError,
+            ValueError,
+        ) as e:
             logger.error("Qdrant search error: %s", e)
             return []
 

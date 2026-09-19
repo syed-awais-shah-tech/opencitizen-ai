@@ -1,15 +1,21 @@
 """Pytest fixtures and configuration for backend test suite."""
 
-from typing import Generator
-from fastapi.testclient import TestClient
+from collections.abc import Generator
+
 import pytest
+from app.core.config import settings
+from app.db.session import get_db
+from app.main import app
+from app.models.base import Base
+from app.search.dependencies import get_vector_store_instance
+from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from app.db.session import get_db
-from app.main import app
-from app.models.base import Base
+# Configure hermetic in-memory environments for tests
+settings.QDRANT_IN_MEMORY = True
+get_vector_store_instance.cache_clear()
 
 # In-memory SQLite engine for fast, isolated, hermetic unit & integration tests
 TEST_DATABASE_URL = "sqlite:///:memory:"
@@ -19,9 +25,7 @@ test_engine = create_engine(
     connect_args={"check_same_thread": False},
     poolclass=StaticPool,
 )
-TestingSessionLocal = sessionmaker(
-    autocommit=False, autoflush=False, bind=test_engine
-)
+TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
 
 
 @pytest.fixture(autouse=True)
