@@ -7,8 +7,10 @@ from app.analytics.exceptions import TableNotAllowedError
 from app.analytics.schemas import (
     AnalyticalQueryRequest,
     AnalyticalResult,
+    ChartConfig,
     TableSchemaInfo,
 )
+from app.analytics.visualization import ChartGenerator
 from app.db.session import get_db
 from app.services.analytics_service import analytics_service
 
@@ -28,6 +30,26 @@ async def query_analytics(
 ) -> AnalyticalResult:
     """Execute controlled analytical query with safety boundaries."""
     return analytics_service.run_analytical_query(request=request, db=db)
+
+
+@router.post(
+    "/visualize",
+    response_model=ChartConfig,
+    status_code=status.HTTP_200_OK,
+    summary="Generate chart configuration from analytical result",
+    description="Deterministically generate an evidence-grounded chart configuration (bar, line, pie, or table) from structured analytical results.",
+)
+async def generate_visualization(
+    result: AnalyticalResult,
+) -> ChartConfig:
+    """Generate safe chart configuration for structured data without LLM hallucination."""
+    return ChartGenerator.generate(
+        columns=result.columns,
+        rows=result.rows,
+        table_name=result.table_name,
+        plan=result.plan,
+        derivation=result.derivation,
+    )
 
 
 @router.get(

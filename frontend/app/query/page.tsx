@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import PageHeader from "../components/PageHeader";
 import InspectionDrawer from "../components/InspectionDrawer";
+import AnalyticalChart from "../components/AnalyticalChart";
+import SqlTraceViewer from "../components/SqlTraceViewer";
 import {
   MOCK_QUERY_SESSIONS,
   PRESET_QUESTIONS,
@@ -17,7 +19,7 @@ export default function QueryPage() {
   const [activeSession, setActiveSession] = useState<QuerySession>(MOCK_QUERY_SESSIONS[0]);
   const [queryInput, setQueryInput] = useState(MOCK_QUERY_SESSIONS[0].question);
   const [isSearching, setIsSearching] = useState(false);
-  const [activeTab, setActiveTab] = useState<"answer" | "evidence" | "sources" | "limitations" | "model">("answer");
+  const [activeTab, setActiveTab] = useState<"answer" | "analysis" | "evidence" | "sources" | "limitations" | "model">("answer");
 
   // Drawer state
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -96,7 +98,7 @@ export default function QueryPage() {
         body: JSON.stringify({
           question: queryInput,
           include_citations: true,
-          include_calculations: false,
+          include_calculations: true,
         }),
       });
 
@@ -109,6 +111,18 @@ export default function QueryPage() {
           answer: data.answer,
           latencyMs: Math.round(data.latency_ms),
           verified: !data.is_placeholder,
+          calculation: data.calculation
+            ? {
+                query: data.calculation.query,
+                executionTimeMs: Math.round(data.calculation.execution_time_ms),
+                rowsScanned: data.calculation.rows_scanned,
+                tableName: data.calculation.table_name,
+                rawRows: data.calculation.raw_rows || [],
+                derivation: data.calculation.derivation,
+                chart: data.calculation.chart || data.chart,
+              }
+            : undefined,
+          chart: data.chart || data.calculation?.chart,
           citations: (data.citations || []).map((c: any) => ({
             documentTitle: c.document_title,
             pageNumber: c.page_number,
@@ -334,6 +348,22 @@ export default function QueryPage() {
           >
             Answer & Grounding
           </button>
+          {activeSession.calculation && (
+            <button
+              onClick={() => setActiveTab("analysis")}
+              className={`tab-item ${activeTab === "analysis" ? "active" : ""}`}
+            >
+              Analysis & Visualization
+              {activeSession.calculation.chart && (
+                <span
+                  className="badge badge-cyan"
+                  style={{ fontSize: "0.62rem", marginLeft: "6px", textTransform: "uppercase" }}
+                >
+                  {activeSession.calculation.chart.chartType}
+                </span>
+              )}
+            </button>
+          )}
           <button
             onClick={() => setActiveTab("evidence")}
             className={`tab-item ${activeTab === "evidence" ? "active" : ""}`}
@@ -415,6 +445,16 @@ export default function QueryPage() {
             >
               {trust.answer}
             </div>
+
+            {/* Structured Analytical Chart Visualization (Stage 12) */}
+            {(activeSession.calculation?.chart || activeSession.chart) && (
+              <div style={{ marginBottom: "28px" }}>
+                <AnalyticalChart
+                  chart={activeSession.calculation?.chart || activeSession.chart}
+                  calculationTitle={activeSession.calculation?.tableName}
+                />
+              </div>
+            )}
 
             {/* Quick Evidence & Sources Overview Grid */}
             <div style={{ marginBottom: "24px" }}>
@@ -520,6 +560,18 @@ export default function QueryPage() {
                 Policy: {trust.confidence.evaluationBasis}
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Analysis & Chart Tab (Stage 12) */}
+        {activeTab === "analysis" && activeSession.calculation && (
+          <div>
+            <div style={{ marginBottom: "18px", fontSize: "0.88rem", color: "var(--text-secondary)", lineHeight: 1.6 }}>
+              Verifiable columnar analytical calculation executed directly by the in-memory DuckDB query engine,
+              guaranteeing zero LLM arithmetic hallucination.
+            </div>
+
+            <SqlTraceViewer calculation={activeSession.calculation} />
           </div>
         )}
 

@@ -15,11 +15,16 @@ from app.analytics.schemas import (
     AnalysisPlan,
     AnalyticalQueryRequest,
     AnalyticalResult,
+    ChartConfig,
+    ChartSeries,
+    ChartType,
     FilterCondition,
+    FormatType,
     SortCondition,
     TableSchemaInfo,
 )
 from app.analytics.validator import QueryValidator
+from app.analytics.visualization import ChartGenerator
 
 __all__ = [
     "DuckDBEngine",
@@ -27,9 +32,14 @@ __all__ = [
     "QueryValidator",
     "QueryPlanner",
     "IntentExtractor",
+    "ChartGenerator",
     "AnalysisPlan",
     "AnalyticalQueryRequest",
     "AnalyticalResult",
+    "ChartConfig",
+    "ChartSeries",
+    "ChartType",
+    "FormatType",
     "FilterCondition",
     "SortCondition",
     "TableSchemaInfo",

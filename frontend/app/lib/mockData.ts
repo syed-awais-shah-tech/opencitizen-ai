@@ -112,6 +112,30 @@ export interface TrustReportData {
   confidence: MeasuredConfidenceData;
 }
 
+export type ChartType = "bar" | "line" | "pie" | "table";
+export type FormatType = "currency" | "number" | "percent" | "integer" | "string";
+
+export interface ChartSeriesData {
+  key: string;
+  label: string;
+  color?: string;
+  formatType?: FormatType;
+}
+
+export interface ChartConfigData {
+  chartType: ChartType;
+  title: string;
+  description?: string;
+  xKey?: string;
+  xLabel?: string;
+  yLabel?: string;
+  series: ChartSeriesData[];
+  data: Record<string, any>[];
+  selectionReason: string;
+  isEmpty?: boolean;
+  errorMessage?: string;
+}
+
 export interface CalculationData {
   query: string;
   executionTimeMs: number;
@@ -119,6 +143,7 @@ export interface CalculationData {
   tableName: string;
   rawRows: Record<string, string | number | boolean | null>[];
   derivation: string;
+  chart?: ChartConfigData;
 }
 
 export interface QuerySession {
@@ -129,6 +154,7 @@ export interface QuerySession {
   citations: CitationData[];
   trust?: TrustReportData;
   calculation?: CalculationData;
+  chart?: ChartConfigData;
   latencyMs: number;
   verified: boolean;
 }
@@ -479,14 +505,38 @@ export const MOCK_QUERY_SESSIONS: QuerySession[] = [
       },
     },
     calculation: {
-      query: "SELECT department, SUM(amount) AS total_spent, COUNT(*) AS transactions FROM dept_expenses WHERE department = 'Parks & Rec' AND fiscal_year = 2023 GROUP BY department;",
+      query: "SELECT department, SUM(amount) AS total_spent, COUNT(*) AS transactions FROM dept_expenses WHERE fiscal_year = 2023 GROUP BY department ORDER BY total_spent DESC LIMIT 5;",
       executionTimeMs: 24,
       rowsScanned: 14280,
       tableName: "dept_expenses",
       rawRows: [
+        { department: "Transportation", total_spent: 8400000, transactions: 814 },
+        { department: "Public Works", total_spent: 6100000, transactions: 652 },
         { department: "Parks & Rec", total_spent: 4250000, transactions: 412 },
+        { department: "Health & Social", total_spent: 3900000, transactions: 388 },
+        { department: "Library System", total_spent: 1950000, transactions: 195 },
       ],
-      derivation: "Result = SUM(amount) where department = 'Parks & Rec' and fiscal_year = 2023 -> Exactly $4,250,000 across 412 audited expenditure items.",
+      derivation: "Result = SUM(amount) grouped by department for fiscal_year = 2023 -> Top 5 municipal departments by total expenditure.",
+      chart: {
+        chartType: "bar",
+        title: "Departmental Expenditure Comparison (FY 2023)",
+        description: "Comparative expenditure across top municipal departments in DuckDB table 'dept_expenses'",
+        xKey: "department",
+        xLabel: "Department",
+        yLabel: "Total Spent ($)",
+        series: [
+          { key: "total_spent", label: "Total Spent", color: "#06b6d4", formatType: "currency" }
+        ],
+        data: [
+          { department: "Transportation", total_spent: 8400000 },
+          { department: "Public Works", total_spent: 6100000 },
+          { department: "Parks & Rec", total_spent: 4250000 },
+          { department: "Health & Social", total_spent: 3900000 },
+          { department: "Library System", total_spent: 1950000 },
+        ],
+        selectionReason: "Selected bar chart for discrete categorical comparison of total expenditure across 5 departments.",
+        isEmpty: false,
+      },
     },
   },
   {
@@ -556,15 +606,36 @@ export const MOCK_QUERY_SESSIONS: QuerySession[] = [
       },
     },
     calculation: {
-      query: "SELECT vendor_name, contract_id, department, contract_value FROM vendor_contracts WHERE is_active = 1 AND contract_value > 2000000 ORDER BY contract_value DESC;",
+      query: "SELECT department, SUM(contract_value) AS total_value FROM vendor_contracts WHERE is_active = 1 GROUP BY department ORDER BY total_value DESC LIMIT 4;",
       executionTimeMs: 12,
       rowsScanned: 3840,
       tableName: "vendor_contracts",
       rawRows: [
-        { vendor_name: "Metro Asphalt Corp", contract_id: "CTR-2023-142", department: "Transportation", contract_value: 4800000 },
-        { vendor_name: "CleanGrid Solutions", contract_id: "CTR-2023-205", department: "Sustainability", contract_value: 2100000 },
+        { department: "Transportation", total_value: 4800000 },
+        { department: "Sustainability", total_value: 2100000 },
+        { department: "Information Tech", total_value: 1750000 },
+        { department: "Facilities", total_value: 1250000 },
       ],
-      derivation: "Filtered vendor_contracts where is_active = 1 and contract_value > 2,000,000. Found 2 qualifying vendor contracts.",
+      derivation: "Aggregated active vendor contract values grouped by municipal department across top 4 allocations.",
+      chart: {
+        chartType: "pie",
+        title: "Active Contract Allocation Share by Department",
+        description: "Compositional share of active contracts exceeding major thresholds in table 'vendor_contracts'",
+        xKey: "department",
+        xLabel: "Department",
+        yLabel: "Contract Value ($)",
+        series: [
+          { key: "total_value", label: "Contract Value", color: "#10b981", formatType: "currency" }
+        ],
+        data: [
+          { department: "Transportation", total_value: 4800000 },
+          { department: "Sustainability", total_value: 2100000 },
+          { department: "Information Tech", total_value: 1750000 },
+          { department: "Facilities", total_value: 1250000 },
+        ],
+        selectionReason: "Selected pie chart because result represents a compositional breakdown across 4 discrete departments with strictly positive values.",
+        isEmpty: false,
+      },
     },
   },
   {
@@ -634,14 +705,65 @@ export const MOCK_QUERY_SESSIONS: QuerySession[] = [
       },
     },
     calculation: {
-      query: "SELECT project_id, project_name, budget_allocated, spent_to_date, completion_pct, status FROM capital_projects WHERE project_id = 'PRJ-011';",
+      query: "SELECT fiscal_year, SUM(spent_to_date) AS total_spent, SUM(budget_allocated) AS total_budget FROM capital_projects GROUP BY fiscal_year ORDER BY fiscal_year ASC;",
       executionTimeMs: 15,
       rowsScanned: 920,
       tableName: "capital_projects",
       rawRows: [
-        { project_id: "PRJ-011", project_name: "Downtown Bikeway Phase II", budget_allocated: 3400000, spent_to_date: 2100000, completion_pct: 62.5, status: "On Schedule" },
+        { fiscal_year: "2021", total_spent: 8500000, total_budget: 10200000 },
+        { fiscal_year: "2022", total_spent: 11400000, total_budget: 13000000 },
+        { fiscal_year: "2023", total_spent: 14800000, total_budget: 16500000 },
+        { fiscal_year: "2024", total_spent: 17200000, total_budget: 18900000 },
       ],
-      derivation: "Direct table lookup on capital_projects by project_id = 'PRJ-011'.",
+      derivation: "Aggregated annual capital expenditures across consecutive fiscal years 2021-2024.",
+      chart: {
+        chartType: "line",
+        title: "Capital Projects Expenditure Trajectory (2021-2024)",
+        description: "Multi-year capital budget and spending progression across municipal infrastructure cycles",
+        xKey: "fiscal_year",
+        xLabel: "Fiscal Year",
+        yLabel: "Capital Budget ($)",
+        series: [
+          { key: "total_spent", label: "Spent to Date", color: "#8b5cf6", formatType: "currency" },
+          { key: "total_budget", label: "Allocated Budget", color: "#06b6d4", formatType: "currency" },
+        ],
+        data: [
+          { fiscal_year: "2021", total_spent: 8500000, total_budget: 10200000 },
+          { fiscal_year: "2022", total_spent: 11400000, total_budget: 13000000 },
+          { fiscal_year: "2023", total_spent: 14800000, total_budget: 16500000 },
+          { fiscal_year: "2024", total_spent: 17200000, total_budget: 18900000 },
+        ],
+        selectionReason: "Selected line chart because dimension 'fiscal_year' represents a chronological temporal sequence across 4 annual periods.",
+        isEmpty: false,
+      },
+    },
+  },
+  {
+    id: "qs-4",
+    timestamp: "2 days ago",
+    question: "Show emergency flood relief allocations for Ward 9 in fiscal year 2020",
+    answer: "No matching emergency flood relief expenditure records were found for Ward 9 in the 2020 fiscal dataset. All emergency flood disbursements recorded in that period were allocated to Ward 3 and Ward 7.",
+    latencyMs: 14,
+    verified: true,
+    citations: [],
+    calculation: {
+      query: "SELECT ward, grant_name, amount FROM civic_grants WHERE ward = 'Ward 9' AND program = 'Flood Relief' AND fiscal_year = 2020;",
+      executionTimeMs: 9,
+      rowsScanned: 2400,
+      tableName: "civic_grants",
+      rawRows: [],
+      derivation: "Filtered civic_grants where ward = 'Ward 9' and program = 'Flood Relief' and fiscal_year = 2020 -> 0 rows returned.",
+      chart: {
+        chartType: "table",
+        title: "Emergency Flood Relief Allocations (Ward 9 - 2020)",
+        description: "Zero records match the requested criteria in table 'civic_grants'",
+        xKey: "grant_name",
+        series: [],
+        data: [],
+        selectionReason: "Result set contains 0 records; defaulting to empty table view.",
+        isEmpty: true,
+        errorMessage: "No analytical records match the specified query filters in the selected fiscal year.",
+      },
     },
   },
 ];
@@ -650,6 +772,7 @@ export const PRESET_QUESTIONS = [
   "What was the total expenditure for Parks & Rec in 2023, and what authorized it?",
   "Which municipal vendors currently hold active contracts exceeding $2,000,000?",
   "What is the progress and budget status of the Downtown Bikeway Phase II capital project?",
+  "Show emergency flood relief allocations for Ward 9 in fiscal year 2020",
   "What emergency authorizations were approved under City Council Resolution 2024-089?",
   "What are the municipal rooftop solar targets in the Clean Energy Transition Strategy?",
 ];

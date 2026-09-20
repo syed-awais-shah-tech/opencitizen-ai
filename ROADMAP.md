@@ -50,7 +50,7 @@ This roadmap outlines the planned development phases for OpenCitizen AI. In acco
 * [ ] Next.js dashboard shell and responsive layout
 * [ ] Document and dataset upload interface with ingestion progress tracking
 * [ ] Evidence-grounded chat and question-answering interface
-* [ ] Dynamic data visualization components using Recharts
+* [x] Dynamic data visualization components using Recharts
 * [ ] Inspectable "Source & Calculation" drawer showing exact citation text and SQL calculations
 
 ---

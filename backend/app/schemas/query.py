@@ -1,6 +1,7 @@
 from typing import Any, Optional
 from pydantic import BaseModel, Field
 
+from app.analytics.schemas import ChartConfig
 from app.trust.models import TrustReport
 
 
@@ -50,6 +51,10 @@ class CalculationItem(BaseModel):
         default_factory=list, description="Direct rows returned by DuckDB SQL"
     )
     derivation: str = Field(..., description="Human-readable mathematical derivation")
+    chart: Optional[ChartConfig] = Field(
+        default=None,
+        description="Structured visualization configuration automatically generated from the calculation result",
+    )
 
 
 class QueryResponse(BaseModel):
@@ -65,6 +70,10 @@ class QueryResponse(BaseModel):
     calculation: Optional[CalculationItem] = Field(
         default=None,
         description="DuckDB SQL calculation trace if quantitative derivation was performed",
+    )
+    chart: Optional[ChartConfig] = Field(
+        default=None,
+        description="Structured visualization configuration if analytical results exist",
     )
     latency_ms: float = Field(default=0.0, description="End-to-end processing latency")
     is_placeholder: bool = Field(

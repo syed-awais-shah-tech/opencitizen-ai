@@ -17,6 +17,7 @@ from app.analytics.schemas import (
     AnalyticalResult,
     TableSchemaInfo,
 )
+from app.analytics.visualization import ChartGenerator
 from app.models.dataset import Dataset
 from app.schemas.query import CalculationItem
 
@@ -145,7 +146,15 @@ class AnalyticsService:
             params=params,
         )
 
-        # Step 6: Formulate structured result
+        # Step 6: Formulate structured result with deterministic chart configuration
+        chart = ChartGenerator.generate(
+            columns=columns,
+            rows=rows,
+            table_name=target_table,
+            plan=plan,
+            derivation=derivation,
+        )
+
         return AnalyticalResult(
             plan=plan,
             query_sql=validated_sql,
@@ -156,6 +165,7 @@ class AnalyticsService:
             execution_time_ms=execution_time_ms,
             table_name=target_table,
             derivation=derivation,
+            chart=chart,
         )
 
     def to_calculation_item(self, result: AnalyticalResult) -> CalculationItem:
@@ -167,6 +177,7 @@ class AnalyticsService:
             table_name=result.table_name,
             raw_rows=result.rows,
             derivation=result.derivation,
+            chart=result.chart,
         )
 
     def list_tables(self) -> list[TableSchemaInfo]:

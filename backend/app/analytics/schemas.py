@@ -126,6 +126,51 @@ class AnalyticalQueryRequest(BaseModel):
     )
 
 
+ChartType = Literal["bar", "line", "pie", "table"]
+FormatType = Literal["currency", "number", "percent", "integer", "string"]
+
+
+class ChartSeries(BaseModel):
+    """Configuration for a single metric series in a chart."""
+
+    key: str = Field(..., description="Data key/column name for this series")
+    label: str = Field(..., description="Display label for the legend/tooltip")
+    color: str = Field(default="#06b6d4", description="Hex color or token for the series")
+    format_type: FormatType = Field(default="number", description="Value formatting rule")
+
+
+class ChartConfig(BaseModel):
+    """Complete, self-contained chart configuration generated deterministically from analytical data."""
+
+    chart_type: ChartType = Field(
+        ..., description="Selected safe chart type: bar, line, pie, table"
+    )
+    title: str = Field(..., description="Descriptive title of the visualization")
+    description: Optional[str] = Field(
+        default=None, description="Contextual explanation or subtitle"
+    )
+    x_key: Optional[str] = Field(
+        default=None, description="Dimension/category key for X-axis"
+    )
+    x_label: Optional[str] = Field(default=None, description="Label for X-axis")
+    y_label: Optional[str] = Field(default=None, description="Label for Y-axis")
+    series: list[ChartSeries] = Field(
+        default_factory=list, description="Data series/metrics to plot"
+    )
+    data: list[dict[str, Any]] = Field(
+        default_factory=list, description="Direct structured data points"
+    )
+    selection_reason: str = Field(
+        ..., description="Deterministic rationale explaining why this chart type was selected"
+    )
+    is_empty: bool = Field(
+        default=False, description="True if no data points or empty result set"
+    )
+    error_message: Optional[str] = Field(
+        default=None, description="Description of any error or degraded state"
+    )
+
+
 class AnalyticalResult(BaseModel):
     """Structured result returned by the DuckDB analytical engine."""
 
@@ -138,6 +183,10 @@ class AnalyticalResult(BaseModel):
     execution_time_ms: float = Field(..., ge=0.0, description="DuckDB execution latency in ms")
     table_name: str = Field(..., description="Target table that was queried")
     derivation: str = Field(..., description="Human-readable mathematical explanation")
+    chart: Optional[ChartConfig] = Field(
+        default=None,
+        description="Structured chart configuration automatically generated from analytical results",
+    )
 
 
 class TableColumnInfo(BaseModel):

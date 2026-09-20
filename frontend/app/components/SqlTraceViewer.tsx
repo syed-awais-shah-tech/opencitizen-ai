@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { CalculationData } from "../lib/mockData";
+import AnalyticalChart from "./AnalyticalChart";
 
 interface SqlTraceViewerProps {
   calculation: CalculationData;
@@ -60,6 +61,13 @@ export default function SqlTraceViewer({ calculation }: SqlTraceViewerProps) {
         </div>
       </div>
 
+      {/* Structured Chart Visualization if present */}
+      {calculation.chart && (
+        <div style={{ marginBottom: "16px" }}>
+          <AnalyticalChart chart={calculation.chart} calculationTitle={calculation.tableName} />
+        </div>
+      )}
+
       {/* SQL Box */}
       <div style={{ position: "relative", marginBottom: "16px" }}>
         <div className="code-box">
@@ -96,8 +104,8 @@ export default function SqlTraceViewer({ calculation }: SqlTraceViewerProps) {
         </div>
       </div>
 
-      {/* Scanned Rows Sample */}
-      {columns.length > 0 && (
+      {/* Scanned Rows Sample (shown when no chart or when inspecting details) */}
+      {!calculation.chart && columns.length > 0 && (
         <div>
           <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "8px" }}>
             Direct Output Rows:
