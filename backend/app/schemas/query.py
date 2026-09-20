@@ -78,3 +78,11 @@ class QueryResponse(BaseModel):
         default=None,
         description="Structured Trust Layer report providing transparent evidence provenance",
     )
+    route: Optional[str] = Field(
+        default=None,
+        description="Orchestration routing category: document_retrieval, data_analysis, both, unsupported",
+    )
+    routing_reasoning: Optional[str] = Field(
+        default=None,
+        description="Explanation of why this routing path was selected",
+    )

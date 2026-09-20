@@ -32,11 +32,11 @@ class IntentExtractor:
         # 2. Resolve Target Column
         target_column = cls._resolve_target_column(q, operation, available_columns)
 
-        # 3. Detect Grouping Columns
-        group_by = cls._detect_group_by(q, available_columns)
-
-        # 4. Detect Filter Constraints
+        # 3. Detect Filter Constraints
         filters = cls._detect_filters(q, available_columns)
+
+        # 4. Detect Grouping Columns (exclude filtered columns unless explicitly grouped)
+        group_by = cls._detect_group_by(q, available_columns, filters)
 
         # 5. Detect Sorting Directives
         sort_by = cls._detect_sorting(q, operation, target_column, group_by)
@@ -61,9 +61,9 @@ class IntentExtractor:
         """Identify operation type from linguistic markers."""
         if any(w in q for w in ("average", "avg", "mean")):
             return "average"
-        if any(w in q for w in ("minimum", "min", "lowest", "least", "cheapest", "smallest")):
+        if any(w in q for w in ("minimum", "min", "lowest", "least", "cheapest", "smallest", "lower")):
             return "minimum"
-        if any(w in q for w in ("maximum", "max", "highest", "most", "largest", "biggest", "greatest")):
+        if any(w in q for w in ("maximum", "max", "highest", "most", "largest", "biggest", "greatest", "higher")):
             return "maximum"
         if any(w in q for w in ("how many", "count", "number of", "count of")):
             return "count"
@@ -88,16 +88,11 @@ class IntentExtractor:
         numeric_cols = [col for col, dtype in schema.items() if dtype in ("INTEGER", "DOUBLE")]
         date_cols = [col for col, dtype in schema.items() if dtype == "DATE"]
 
-        # 1. Exact or keyword column match in question
-        for col in schema:
-            col_tokens = col.replace("_", " ").split()
-            if col in q or all(tok in q for tok in col_tokens):
-                if operation in ("sum", "average") and col in numeric_cols:
+        # 1. Semantic keywords mapping
+        if "unemployment" in q or "jobless" in q or "employment" in q:
+            for col in ("unemployment_rate", "rate", "unemployed_count", "employed_count"):
+                if col in schema:
                     return col
-                if operation in ("minimum", "maximum"):
-                    return col
-
-        # 2. Semantic keywords mapping
         if "spent" in q or "amount" in q or "expense" in q or "expenditure" in q:
             for col in ("amount", "grant_amount", "spent_to_date", "total_spent"):
                 if col in schema:
@@ -113,10 +108,25 @@ class IntentExtractor:
             if "completion_pct" in schema:
                 return "completion_pct"
 
+        # 2. Exact or keyword column match in question for numeric columns
+        for col in numeric_cols:
+            col_tokens = col.replace("_", " ").split()
+            if col in q or all(tok in q for tok in col_tokens):
+                return col
+
         # 3. If min/max and date is mentioned
         if operation in ("minimum", "maximum") and any(w in q for w in ("date", "earliest", "latest")):
             for col in ("award_date", "transaction_date", "approval_date", "date"):
                 if col in schema:
+                    return col
+
+        # 4. Any other matching column in schema
+        for col in schema:
+            col_tokens = col.replace("_", " ").split()
+            if col in q or all(tok in q for tok in col_tokens):
+                if operation in ("sum", "average") and col in numeric_cols:
+                    return col
+                if operation in ("minimum", "maximum"):
                     return col
 
         # 4. Fallback: choose the primary numeric column
@@ -132,7 +142,9 @@ class IntentExtractor:
         return list(schema.keys())[0] if schema else None
 
     @classmethod
-    def _detect_group_by(cls, q: str, schema: dict[str, str]) -> list[str]:
+    def _detect_group_by(
+        cls, q: str, schema: dict[str, str], filters: list[FilterCondition] | None = None
+    ) -> list[str]:
         """Detect grouping dimensions indicated by 'by <column>', 'per <column>', etc."""
         group_by: list[str] = []
 
@@ -152,9 +164,13 @@ class IntentExtractor:
                 clean_m = re.split(r"\b(in|for|with|where|order|sort|limit)\b", m)[0].strip()
                 extracted_words.extend(clean_m.split())
 
+        filtered_cols = {f.column for f in (filters or [])}
         for col in schema:
             col_phrase = col.replace("_", " ")
-            if col in extracted_words or col_phrase in q:
+            if col in extracted_words:
+                if col not in group_by:
+                    group_by.append(col)
+            elif col_phrase in q and col not in filtered_cols:
                 if col not in group_by:
                     group_by.append(col)
 
@@ -205,6 +221,16 @@ class IntentExtractor:
                     if f"by {key}" not in q and f"per {key}" not in q:
                         filters.append(FilterCondition(column="department", operator="=", value=dept_val))
                         break
+
+        # 5. Province filter (e.g. "in province X", "for province A")
+        if "province" in schema:
+            prov_match = re.search(r"\bprovince\s+([a-zA-Z0-9]+)\b", q)
+            if prov_match:
+                candidate = prov_match.group(1).lower()
+                stop_words = {"has", "had", "is", "was", "with", "where", "does", "in", "by", "for", "the", "and", "or"}
+                if candidate not in stop_words:
+                    prov_letter = candidate.upper() if len(candidate) <= 2 else candidate.title()
+                    filters.append(FilterCondition(column="province", operator="=", value=f"Province {prov_letter}"))
 
         # 5. Numeric comparison (e.g. "greater than 50000", "> 100000")
         gt_match = re.search(r"(?:greater than|more than|above|>)\s*(\d+(?:\.\d+)?)", q)
@@ -259,4 +285,6 @@ class IntentExtractor:
         if top_match:
             val = int(top_match.group(1))
             return min(max(1, val), 1000)
+        if re.search(r"\b(?:which|what)\s+\w+\s+(?:has|had|is)\s+the\s+(?:highest|lowest|most|least|greatest|smallest)\b", q):
+            return 1
         return min(max(1, default_limit), 1000)

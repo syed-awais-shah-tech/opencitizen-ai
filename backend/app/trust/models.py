@@ -56,7 +56,7 @@ class RetrievalMetadata(BaseModel):
         default="Qdrant HNSW",
         description="Vector database engine and indexing technique",
     )
-    top_k: int = Field(..., ge=1, description="Maximum chunks requested for retrieval")
+    top_k: int = Field(default=0, ge=0, description="Maximum chunks requested for retrieval")
     score_threshold: float = Field(
         ...,
         ge=0.0,

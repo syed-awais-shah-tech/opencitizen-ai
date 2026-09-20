@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from app.models.answer import Answer
 from app.models.citation import Citation
 from app.models.query import Query
+from app.orchestration.orchestrator import QueryOrchestrator, query_orchestrator
 from app.rag.pipeline import RAGPipeline, get_rag_pipeline
 from app.schemas.query import (
     CalculationItem,
@@ -18,10 +19,15 @@ from app.schemas.query import (
 
 
 class QueryService:
-    """Service orchestrating RAG pipeline retrieval and application metadata persistence."""
+    """Service orchestrating controlled query routing, multi-source execution, and audit persistence."""
 
-    def __init__(self, rag_pipeline: RAGPipeline | None = None):
+    def __init__(
+        self,
+        rag_pipeline: RAGPipeline | None = None,
+        orchestrator: QueryOrchestrator | None = None,
+    ):
         self._rag_pipeline = rag_pipeline
+        self._orchestrator = orchestrator
 
     @property
     def rag_pipeline(self) -> RAGPipeline:
@@ -29,60 +35,42 @@ class QueryService:
             self._rag_pipeline = get_rag_pipeline()
         return self._rag_pipeline
 
+    @property
+    def orchestrator(self) -> QueryOrchestrator:
+        if self._orchestrator is None:
+            if self._rag_pipeline is not None:
+                self._orchestrator = QueryOrchestrator(rag_pipeline=self._rag_pipeline)
+            else:
+                self._orchestrator = query_orchestrator
+        return self._orchestrator
+
     def process_query(
         self, request: QueryRequest, db: Session | None = None
     ) -> QueryResponse:
-        """Process a natural language civic inquiry via the RAG pipeline."""
-        start_time = time.perf_counter()
-        query_id = f"qry_{uuid.uuid4().hex[:12]}"
-
-        # Execute production RAG pipeline:
-        # question -> processing -> vector retrieval -> relevant chunks -> Gemini -> grounded answer
-        rag_response = self.rag_pipeline.run(question=request.question)
-
-        answer = rag_response.answer
-        citations: list[CitationItem] = []
-        if request.include_citations:
-            citations = rag_response.citations
-
-        # Controlled DuckDB analytical query pipeline (Stage 10)
-        calculation: CalculationItem | None = None
-        if request.include_calculations:
-            try:
-                from app.analytics.schemas import AnalyticalQueryRequest
-                from app.services.analytics_service import analytics_service
-
-                analytical_res = analytics_service.run_analytical_query(
-                    AnalyticalQueryRequest(question=request.question),
-                    db=db,
-                )
-                calculation = analytics_service.to_calculation_item(analytical_res)
-            except Exception:
-                calculation = None
-
-        elapsed_ms = round((time.perf_counter() - start_time) * 1000, 2)
+        """Process a natural language civic inquiry via the query orchestration layer."""
+        response = self.orchestrator.orchestrate(request=request, db=db)
 
         # Persist query and answer audit trail in PostgreSQL if database session provided
         if db is not None:
             db_query = Query(
-                id=query_id,
+                id=response.query_id,
                 session_id=request.session_id,
                 question=request.question,
-                status="completed",
+                status=response.status,
             )
             db.add(db_query)
 
             db_answer = Answer(
                 id=f"ans_{uuid.uuid4().hex[:12]}",
-                query_id=query_id,
-                answer_text=answer,
-                latency_ms=elapsed_ms,
-                is_placeholder=rag_response.is_insufficient_evidence,
-                calculation_trace=calculation.model_dump() if calculation else None,
+                query_id=response.query_id,
+                answer_text=response.answer,
+                latency_ms=response.latency_ms,
+                is_placeholder=response.is_placeholder,
+                calculation_trace=response.calculation.model_dump() if response.calculation else None,
             )
             db.add(db_answer)
 
-            for cit in citations:
+            for cit in response.citations:
                 db_citation = Citation(
                     id=f"cit_{uuid.uuid4().hex[:12]}",
                     answer_id=db_answer.id,
@@ -97,17 +85,7 @@ class QueryService:
 
             db.commit()
 
-        return QueryResponse(
-            query_id=query_id,
-            question=request.question,
-            answer=answer,
-            citations=citations,
-            calculation=calculation,
-            latency_ms=elapsed_ms,
-            is_placeholder=rag_response.is_insufficient_evidence,
-            status="completed",
-            trust=rag_response.trust,
-        )
+        return response
 
 
 query_service = QueryService()

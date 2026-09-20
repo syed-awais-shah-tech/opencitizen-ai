@@ -63,6 +63,7 @@ class AnalyticsService:
                 "dept_expenses": ["expense", "spent", "spending", "department", "cost"],
                 "vendor_contracts": ["vendor", "contract", "award", "contractor"],
                 "civic_grants": ["grant", "recipient", "disbursed", "program"],
+                "regional_unemployment": ["unemployment", "labor", "employment", "province", "jobless"],
                 "capital_projects": ["project", "capital", "bikeway", "storm", "infrastructure"],
             }
             for tbl, keywords in table_keywords.items():

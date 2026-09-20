@@ -210,6 +210,15 @@ class DuckDBEngine:
         ])
         self.register_dataframe("civic_grants", grants_df)
 
+        # 4. regional_unemployment
+        unemployment_df = pd.DataFrame([
+            {"province": "Province A", "unemployment_rate": 6.2, "labor_force": 1200000, "year": 2023},
+            {"province": "Province B", "unemployment_rate": 5.4, "labor_force": 2500000, "year": 2023},
+            {"province": "Province X", "unemployment_rate": 9.8, "labor_force": 850000, "year": 2023},
+            {"province": "Province Y", "unemployment_rate": 7.1, "labor_force": 1800000, "year": 2023},
+        ])
+        self.register_dataframe("regional_unemployment", unemployment_df)
+
 
 # Shared singleton engine instance
 duckdb_engine = DuckDBEngine()
