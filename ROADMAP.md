@@ -28,12 +28,13 @@ This roadmap outlines the planned development phases for OpenCitizen AI. In acco
 
 ---
 
-## Milestone 2: AI Provider & Evidence Grounding [Planned]
-* [ ] AI Provider clean abstraction layer (`AIProvider` interface)
-* [ ] Gemini API implementation of `AIProvider` (embeddings and reasoning models)
-* [ ] Semantic search pipeline retrieving top-k relevant document chunks with exact page citations
-* [ ] Mock AI provider implementation for deterministic unit and CI tests
-* [ ] Test suite for retrieval precision and citation extraction
+## Milestone 2: AI Provider & Evidence Grounding [In Progress]
+* [x] AI Provider clean abstraction layer (`AIProvider` interface)
+* [x] Gemini API implementation of `AIProvider` (embeddings and reasoning models)
+* [x] Semantic search pipeline retrieving top-k relevant document chunks with exact page citations
+* [x] Hybrid semantic-lexical retrieval combining dense embeddings with Okapi BM25 and Reciprocal Rank Fusion
+* [x] Mock AI provider implementation for deterministic unit and CI tests
+* [x] Test suite for retrieval precision and citation extraction
 
 ---
 

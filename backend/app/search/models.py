@@ -1,6 +1,6 @@
 """Data models for vector search results, queries, and index operations."""
 
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -31,11 +31,11 @@ class VectorSearchResult(BaseModel):
     )
     score: float = Field(
         ...,
-        description="Similarity or relevance score computed by the vector store",
+        description="Similarity or relevance score computed by the vector store or fusion reranker",
     )
     metadata: dict[str, Any] = Field(
         default_factory=dict,
-        description="Additional lineage or domain metadata attached to the chunk",
+        description="Additional lineage, domain, or retrieval metadata attached to the chunk",
     )
 
 
@@ -63,7 +63,7 @@ class VectorIndexResult(BaseModel):
 
 
 class SearchQuery(BaseModel):
-    """Semantic search query request parameters."""
+    """Search query request parameters supporting semantic, lexical, and hybrid modes."""
 
     query: str = Field(
         ...,
@@ -80,9 +80,13 @@ class SearchQuery(BaseModel):
         default=None,
         ge=0.0,
         le=1.0,
-        description="Optional minimum cosine similarity score threshold",
+        description="Optional minimum similarity score threshold",
     )
     document_id: str | None = Field(
         default=None,
         description="Optional document ID to restrict search scope",
+    )
+    mode: Literal["hybrid", "semantic", "lexical"] = Field(
+        default="hybrid",
+        description="Retrieval mode: 'hybrid' (combined + RRF reranked), 'semantic', or 'lexical'",
     )
