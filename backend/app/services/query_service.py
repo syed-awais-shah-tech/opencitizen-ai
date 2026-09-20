@@ -45,8 +45,20 @@ class QueryService:
         if request.include_citations:
             citations = rag_response.citations
 
-        # Quantitative DuckDB SQL arithmetic is deferred to subsequent stage
+        # Controlled DuckDB analytical query pipeline (Stage 10)
         calculation: CalculationItem | None = None
+        if request.include_calculations:
+            try:
+                from app.analytics.schemas import AnalyticalQueryRequest
+                from app.services.analytics_service import analytics_service
+
+                analytical_res = analytics_service.run_analytical_query(
+                    AnalyticalQueryRequest(question=request.question),
+                    db=db,
+                )
+                calculation = analytics_service.to_calculation_item(analytical_res)
+            except Exception:
+                calculation = None
 
         elapsed_ms = round((time.perf_counter() - start_time) * 1000, 2)
 
@@ -66,7 +78,7 @@ class QueryService:
                 answer_text=answer,
                 latency_ms=elapsed_ms,
                 is_placeholder=rag_response.is_insufficient_evidence,
-                calculation_trace=None,
+                calculation_trace=calculation.model_dump() if calculation else None,
             )
             db.add(db_answer)
 
