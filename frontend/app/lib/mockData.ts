@@ -22,21 +22,36 @@ export interface DocumentItem {
 export interface DatasetColumn {
   name: string;
   type: "VARCHAR" | "DOUBLE" | "INTEGER" | "DATE" | "BOOLEAN";
+  missingCount?: number;
+  nullPercentage?: number;
+}
+
+export interface DatasetPreviewData {
+  datasetId: string;
+  name: string;
+  format: string;
+  rowCount: number;
+  columnsCount: number;
+  columns: string[];
+  inferredTypes: Record<string, string>;
+  missingValueCounts: Record<string, number>;
+  sampleRows: Record<string, any>[];
 }
 
 export interface DatasetItem {
   id: string;
   name: string;
-  category: "Expenditure" | "Procurement" | "Public Works" | "Demographics";
-  format: "CSV" | "XLSX" | "PARQUET";
+  category: "Expenditure" | "Procurement" | "Public Works" | "Demographics" | "Grants";
+  format: "CSV" | "XLSX" | "JSON" | "PARQUET";
   rowCount: string;
   columnsCount: number;
   tableName: string;
-  status: "active" | "registered";
+  status: "active" | "registered" | "ready";
   date: string;
   size: string;
   columns: DatasetColumn[];
-  sampleRows: Record<string, string | number>[];
+  sampleRows: Record<string, string | number | boolean | null>[];
+  missingValueCounts?: Record<string, number>;
 }
 
 export interface CitationData {
@@ -102,7 +117,7 @@ export interface CalculationData {
   executionTimeMs: number;
   rowsScanned: number;
   tableName: string;
-  rawRows: Record<string, string | number>[];
+  rawRows: Record<string, string | number | boolean | null>[];
   derivation: string;
 }
 
@@ -207,13 +222,21 @@ export const MOCK_DATASETS: DatasetItem[] = [
     date: "Sep 16, 2026",
     size: "2.4 MB",
     columns: [
-      { name: "department", type: "VARCHAR" },
-      { name: "fiscal_year", type: "INTEGER" },
-      { name: "amount", type: "DOUBLE" },
-      { name: "vendor_name", type: "VARCHAR" },
-      { name: "fund_source", type: "VARCHAR" },
-      { name: "transaction_date", type: "DATE" },
+      { name: "department", type: "VARCHAR", missingCount: 0, nullPercentage: 0.0 },
+      { name: "fiscal_year", type: "INTEGER", missingCount: 0, nullPercentage: 0.0 },
+      { name: "amount", type: "DOUBLE", missingCount: 0, nullPercentage: 0.0 },
+      { name: "vendor_name", type: "VARCHAR", missingCount: 14, nullPercentage: 0.1 },
+      { name: "fund_source", type: "VARCHAR", missingCount: 0, nullPercentage: 0.0 },
+      { name: "transaction_date", type: "DATE", missingCount: 0, nullPercentage: 0.0 },
     ],
+    missingValueCounts: {
+      department: 0,
+      fiscal_year: 0,
+      amount: 0,
+      vendor_name: 14,
+      fund_source: 0,
+      transaction_date: 0,
+    },
     sampleRows: [
       { department: "Parks & Rec", fiscal_year: 2023, amount: 45000, vendor_name: "Apex Facility Services", fund_source: "General", transaction_date: "2023-04-12" },
       { department: "Parks & Rec", fiscal_year: 2023, amount: 12400, vendor_name: "Civic Turf & Landscape", fund_source: "Special", transaction_date: "2023-05-18" },
@@ -233,14 +256,23 @@ export const MOCK_DATASETS: DatasetItem[] = [
     date: "Sep 14, 2026",
     size: "1.8 MB",
     columns: [
-      { name: "contract_id", type: "VARCHAR" },
-      { name: "vendor_name", type: "VARCHAR" },
-      { name: "department", type: "VARCHAR" },
-      { name: "contract_value", type: "DOUBLE" },
-      { name: "award_date", type: "DATE" },
-      { name: "end_date", type: "DATE" },
-      { name: "is_active", type: "BOOLEAN" },
+      { name: "contract_id", type: "VARCHAR", missingCount: 0, nullPercentage: 0.0 },
+      { name: "vendor_name", type: "VARCHAR", missingCount: 0, nullPercentage: 0.0 },
+      { name: "department", type: "VARCHAR", missingCount: 0, nullPercentage: 0.0 },
+      { name: "contract_value", type: "DOUBLE", missingCount: 0, nullPercentage: 0.0 },
+      { name: "award_date", type: "DATE", missingCount: 0, nullPercentage: 0.0 },
+      { name: "end_date", type: "DATE", missingCount: 8, nullPercentage: 0.2 },
+      { name: "is_active", type: "BOOLEAN", missingCount: 0, nullPercentage: 0.0 },
     ],
+    missingValueCounts: {
+      contract_id: 0,
+      vendor_name: 0,
+      department: 0,
+      contract_value: 0,
+      award_date: 0,
+      end_date: 8,
+      is_active: 0,
+    },
     sampleRows: [
       { contract_id: "CTR-2023-091", vendor_name: "Apex Facility Services", department: "Parks & Rec", contract_value: 1250000, award_date: "2023-01-15", end_date: "2025-01-15", is_active: 1 },
       { contract_id: "CTR-2023-142", vendor_name: "Metro Asphalt Corp", department: "Transportation", contract_value: 4800000, award_date: "2023-03-01", end_date: "2026-03-01", is_active: 1 },
@@ -259,19 +291,63 @@ export const MOCK_DATASETS: DatasetItem[] = [
     date: "Sep 10, 2026",
     size: "540 KB",
     columns: [
-      { name: "project_id", type: "VARCHAR" },
-      { name: "project_name", type: "VARCHAR" },
-      { name: "budget_allocated", type: "DOUBLE" },
-      { name: "spent_to_date", type: "DOUBLE" },
-      { name: "completion_pct", type: "DOUBLE" },
-      { name: "lead_agency", type: "VARCHAR" },
-      { name: "target_quarter", type: "VARCHAR" },
-      { name: "status", type: "VARCHAR" },
+      { name: "project_id", type: "VARCHAR", missingCount: 0, nullPercentage: 0.0 },
+      { name: "project_name", type: "VARCHAR", missingCount: 0, nullPercentage: 0.0 },
+      { name: "budget_allocated", type: "DOUBLE", missingCount: 0, nullPercentage: 0.0 },
+      { name: "spent_to_date", type: "DOUBLE", missingCount: 0, nullPercentage: 0.0 },
+      { name: "completion_pct", type: "DOUBLE", missingCount: 0, nullPercentage: 0.0 },
+      { name: "lead_agency", type: "VARCHAR", missingCount: 0, nullPercentage: 0.0 },
+      { name: "target_quarter", type: "VARCHAR", missingCount: 0, nullPercentage: 0.0 },
+      { name: "status", type: "VARCHAR", missingCount: 0, nullPercentage: 0.0 },
     ],
+    missingValueCounts: {
+      project_id: 0,
+      project_name: 0,
+      budget_allocated: 0,
+      spent_to_date: 0,
+      completion_pct: 0,
+      lead_agency: 0,
+      target_quarter: 0,
+      status: 0,
+    },
     sampleRows: [
       { project_id: "PRJ-011", project_name: "Downtown Bikeway Phase II", budget_allocated: 3400000, spent_to_date: 2100000, completion_pct: 62.5, lead_agency: "Transportation", target_quarter: "2024-Q3", status: "On Schedule" },
       { project_id: "PRJ-014", project_name: "Westside Community Pool Solar", budget_allocated: 950000, spent_to_date: 920000, completion_pct: 98.0, lead_agency: "Parks & Rec", target_quarter: "2024-Q2", status: "Finishing" },
       { project_id: "PRJ-019", project_name: "Harbor Storm Drain Retrofit", budget_allocated: 5200000, spent_to_date: 1400000, completion_pct: 27.0, lead_agency: "Public Works", target_quarter: "2025-Q1", status: "In Progress" },
+    ],
+  },
+  {
+    id: "data-4",
+    name: "civic_grants_registry_2024.json",
+    category: "Grants",
+    format: "JSON",
+    rowCount: "1,240",
+    columnsCount: 6,
+    tableName: "civic_grants",
+    status: "ready",
+    date: "Sep 20, 2026",
+    size: "680 KB",
+    columns: [
+      { name: "grant_id", type: "VARCHAR", missingCount: 0, nullPercentage: 0.0 },
+      { name: "recipient", type: "VARCHAR", missingCount: 0, nullPercentage: 0.0 },
+      { name: "grant_amount", type: "DOUBLE", missingCount: 0, nullPercentage: 0.0 },
+      { name: "disbursed", type: "BOOLEAN", missingCount: 0, nullPercentage: 0.0 },
+      { name: "approval_date", type: "DATE", missingCount: 12, nullPercentage: 1.0 },
+      { name: "program_name", type: "VARCHAR", missingCount: 5, nullPercentage: 0.4 },
+    ],
+    missingValueCounts: {
+      grant_id: 0,
+      recipient: 0,
+      grant_amount: 0,
+      disbursed: 0,
+      approval_date: 12,
+      program_name: 5,
+    },
+    sampleRows: [
+      { grant_id: "GRN-2024-001", recipient: "Westside Youth Arts", grant_amount: 45000, disbursed: true, approval_date: "2024-01-15", program_name: "Community Cultural Fund" },
+      { grant_id: "GRN-2024-002", recipient: "Harbor Clean Waters", grant_amount: 120000, disbursed: true, approval_date: "2024-02-20", program_name: "Environmental Resilience" },
+      { grant_id: "GRN-2024-003", recipient: "Downtown Urban Greenery", grant_amount: 35000, disbursed: false, approval_date: "2024-03-05", program_name: null },
+      { grant_id: "GRN-2024-004", recipient: "Elder Transit Link", grant_amount: 78000, disbursed: true, approval_date: null, program_name: "Civic Mobility Grant" },
     ],
   },
 ];

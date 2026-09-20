@@ -82,6 +82,7 @@ htmlcov/
 *.duckdb.wal
 qdrant_storage/
 postgres_data/
+storage/
 *.parquet.tmp
 *.sqlite3
 

@@ -116,7 +116,17 @@ export default function SqlTraceViewer({ calculation }: SqlTraceViewerProps) {
                   <tr key={idx}>
                     {columns.map((col) => (
                       <td key={col} style={{ fontFamily: typeof row[col] === "number" ? "var(--font-mono)" : "inherit" }}>
-                        {typeof row[col] === "number" ? Number(row[col]).toLocaleString() : String(row[col])}
+                        {row[col] === null || row[col] === undefined ? (
+                          <span style={{ color: "var(--text-muted)", fontStyle: "italic", fontSize: "0.75rem" }}>null</span>
+                        ) : typeof row[col] === "boolean" ? (
+                          <span className={`badge ${row[col] ? "badge-emerald" : "badge-purple"}`} style={{ fontSize: "0.68rem" }}>
+                            {row[col] ? "TRUE" : "FALSE"}
+                          </span>
+                        ) : typeof row[col] === "number" ? (
+                          Number(row[col]).toLocaleString()
+                        ) : (
+                          String(row[col])
+                        )}
                       </td>
                     ))}
                   </tr>

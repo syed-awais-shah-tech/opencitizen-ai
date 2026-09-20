@@ -1,11 +1,15 @@
-"""API routes for tabular datasets and DuckDB tables."""
-
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, File, Form, Query, UploadFile, status
 from sqlalchemy.orm import Session
 
 from app.core.errors import EntityNotFoundError
 from app.db.session import get_db
-from app.schemas.datasets import DatasetCreate, DatasetItem, DatasetListResponse
+from app.schemas.datasets import (
+    DatasetCreate,
+    DatasetItem,
+    DatasetListResponse,
+    DatasetPreview,
+    DatasetUploadResponse,
+)
 from app.services.datasets_service import datasets_service
 
 router = APIRouter(prefix="/datasets", tags=["Datasets"])
@@ -42,6 +46,32 @@ async def create_dataset(
     return datasets_service.create_dataset(db=db, payload=payload)
 
 
+@router.post(
+    "/upload",
+    response_model=DatasetUploadResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Upload and ingest structured dataset",
+    description="Upload CSV, XLSX, or JSON files. Detects format, inspects schema, identifies columns, infers data types, validates records, and generates preview.",
+)
+async def upload_dataset(
+    file: UploadFile = File(..., description="Tabular data file (CSV, XLSX, or JSON)"),
+    category: str = Form(default="General", description="Civic domain category"),
+    table_name: str | None = Form(default=None, description="Optional target table name"),
+    db: Session = Depends(get_db),
+) -> DatasetUploadResponse:
+    """Ingest tabular dataset file into metadata repository and generate interactive preview."""
+    content = await file.read()
+    filename = file.filename or "uploaded_dataset.csv"
+    dataset_item, preview = datasets_service.ingest_dataset_file(
+        db=db,
+        content=content,
+        filename=filename,
+        category=category,
+        table_name=table_name,
+    )
+    return DatasetUploadResponse(dataset=dataset_item, preview=preview)
+
+
 @router.get(
     "/{dataset_id}",
     response_model=DatasetItem,
@@ -58,3 +88,21 @@ async def get_dataset(
     if not dataset:
         raise EntityNotFoundError("Dataset", dataset_id)
     return dataset
+
+
+@router.get(
+    "/{dataset_id}/preview",
+    response_model=DatasetPreview,
+    status_code=status.HTTP_200_OK,
+    summary="Inspect dataset preview and schema",
+    description="Returns columns, inferred types, row count, missing value counts, and sample rows.",
+)
+async def get_dataset_preview(
+    dataset_id: str,
+    db: Session = Depends(get_db),
+) -> DatasetPreview:
+    """Retrieve schema preview, column data types, missing counts, and sample records."""
+    preview = datasets_service.get_dataset_preview(db=db, dataset_id=dataset_id)
+    if not preview:
+        raise EntityNotFoundError("Dataset", dataset_id)
+    return preview

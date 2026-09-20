@@ -57,3 +57,33 @@ class ExtractionError(IngestionError):
             status_code=422,
             details=details,
         )
+
+
+class UnsupportedDatasetFormatError(IngestionError):
+    """Raised when an uploaded structured dataset is not a supported format (CSV, XLSX, JSON)."""
+
+    def __init__(
+        self,
+        message: str = "Unsupported dataset format. OpenCitizen AI supports CSV, XLSX, and JSON.",
+    ) -> None:
+        super().__init__(
+            message=message,
+            error_code="UNSUPPORTED_DATASET_FORMAT",
+            status_code=400,
+        )
+
+
+class DatasetValidationError(IngestionError):
+    """Raised when dataset structure, schema, or content fails ingestion validation."""
+
+    def __init__(
+        self,
+        message: str = "Dataset validation failed.",
+        details: object = None,
+    ) -> None:
+        super().__init__(
+            message=message,
+            error_code="DATASET_VALIDATION_ERROR",
+            status_code=422,
+            details=details,
+        )
