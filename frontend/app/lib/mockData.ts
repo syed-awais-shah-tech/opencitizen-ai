@@ -49,6 +49,54 @@ export interface CitationData {
   highlightWords?: string[];
 }
 
+export interface SourceDocumentData {
+  documentTitle: string;
+  pageNumbers: number[];
+  chunkCount: number;
+  department?: string;
+}
+
+export interface EvidenceSnippetData {
+  snippetId: string;
+  documentTitle: string;
+  pageNumber: number;
+  text: string;
+  similarityScore: number;
+  rank: number;
+  department?: string;
+}
+
+export interface RetrievalMetadataData {
+  vectorStore: string;
+  topK: number;
+  scoreThreshold: number;
+  totalRetrievedChunks: number;
+  searchLatencyMs: number;
+}
+
+export interface MeasuredConfidenceData {
+  isGrounded: boolean;
+  evidenceCount: number;
+  meanSimilarityScore?: number;
+  minSimilarityScore?: number;
+  maxSimilarityScore?: number;
+  scoreMetric: string;
+  verifiabilityRating: "high" | "moderate" | "insufficient";
+  explanation: string;
+  evaluationBasis: string;
+}
+
+export interface TrustReportData {
+  answer: string;
+  sourceDocuments: SourceDocumentData[];
+  pageNumbers: number[];
+  evidenceSnippets: EvidenceSnippetData[];
+  retrievalMetadata: RetrievalMetadataData;
+  modelIdentifier: string;
+  limitations: string[];
+  confidence: MeasuredConfidenceData;
+}
+
 export interface CalculationData {
   query: string;
   executionTimeMs: number;
@@ -64,6 +112,7 @@ export interface QuerySession {
   question: string;
   answer: string;
   citations: CitationData[];
+  trust?: TrustReportData;
   calculation?: CalculationData;
   latencyMs: number;
   verified: boolean;
@@ -290,6 +339,69 @@ export const MOCK_QUERY_SESSIONS: QuerySession[] = [
         highlightWords: ["$4.25M ceiling", "zero unauthorized variances"],
       },
     ],
+    trust: {
+      answer: "In fiscal year 2023, the Parks & Recreation department had an audited total expenditure of $4,250,000 across 412 transactions. This spending was authorized under Section 3.2 of the City Adopted Budget 2024, which approved a 6.2% adjustment specifically for community center energy retrofits and summer youth programming.",
+      sourceDocuments: [
+        {
+          documentTitle: "City_Adopted_Budget_2024.pdf",
+          pageNumbers: [14],
+          chunkCount: 1,
+          department: "Office of Management & Budget",
+        },
+        {
+          documentTitle: "Parks_Recreation_Facilities_Audit_2023.pdf",
+          pageNumbers: [5],
+          chunkCount: 1,
+          department: "Parks & Recreation",
+        },
+      ],
+      pageNumbers: [5, 14],
+      evidenceSnippets: [
+        {
+          snippetId: "chk_city_budget_p14_003",
+          documentTitle: "City_Adopted_Budget_2024.pdf",
+          pageNumber: 14,
+          similarityScore: 0.912,
+          rank: 1,
+          department: "Office of Management & Budget",
+          text: "Section 3.2 - Parks, Recreation & Community Facilities: The authorized operational allocation for fiscal year 2023 was adjusted to $4,250,000, reflecting a 6.2% increase to accommodate community center energy efficiency retrofits and expanded summer youth programming.",
+        },
+        {
+          snippetId: "chk_parks_audit_p5_001",
+          documentTitle: "Parks_Recreation_Facilities_Audit_2023.pdf",
+          pageNumber: 5,
+          similarityScore: 0.884,
+          rank: 2,
+          department: "Parks & Recreation",
+          text: "Audit Summary: Operating expenditures reconciled against Treasury warrants matched the budgeted $4.25M ceiling with zero unauthorized variances detected in community athletics accounts.",
+        },
+      ],
+      retrievalMetadata: {
+        vectorStore: "Qdrant HNSW",
+        topK: 5,
+        scoreThreshold: 0.65,
+        totalRetrievedChunks: 2,
+        searchLatencyMs: 14.8,
+      },
+      modelIdentifier: "gemini-2.5-flash",
+      limitations: [
+        "Grounding Boundary: Synthesized exclusively from retrieved municipal records. Content not present in the indexed document repository cannot be attested.",
+        "Temporal Scope: Factual information reflects document publication dates and may not reflect subsequent legislative actions, emergency resolutions, or revised budget amendments.",
+        "Advisory Notice: Automated civic analysis is intended for public transparency and research assistance and does not constitute formal legal counsel or official certified municipal audit.",
+        "Evidence Inspection: Citizens can independently verify each claim by inspecting the exact verbatim excerpts and page citations in the provenance drawer.",
+      ],
+      confidence: {
+        isGrounded: true,
+        evidenceCount: 2,
+        meanSimilarityScore: 0.898,
+        minSimilarityScore: 0.884,
+        maxSimilarityScore: 0.912,
+        scoreMetric: "cosine_similarity",
+        verifiabilityRating: "high",
+        explanation: "Answer is backed by 2 verified excerpt(s) across 2 source document(s) with an average cosine similarity of 0.8980 (range: 0.8840 - 0.9120).",
+        evaluationBasis: "Empirical vector cosine similarity and source evidence coverage without statistical inflation",
+      },
+    },
     calculation: {
       query: "SELECT department, SUM(amount) AS total_spent, COUNT(*) AS transactions FROM dept_expenses WHERE department = 'Parks & Rec' AND fiscal_year = 2023 GROUP BY department;",
       executionTimeMs: 24,
@@ -319,6 +431,54 @@ export const MOCK_QUERY_SESSIONS: QuerySession[] = [
         highlightWords: ["CTR-2023-142", "$4.8M"],
       },
     ],
+    trust: {
+      answer: "Based on the municipal vendor registry, two vendors hold active contracts exceeding $2,000,000: Metro Asphalt Corp holding contract CTR-2023-142 valued at $4,800,000 for Transportation, and CleanGrid Solutions holding CTR-2023-205 valued at $2,100,000 for the Sustainability Office.",
+      sourceDocuments: [
+        {
+          documentTitle: "Transportation_Master_Plan_2030.pdf",
+          pageNumbers: [22],
+          chunkCount: 1,
+          department: "Department of Transportation",
+        },
+      ],
+      pageNumbers: [22],
+      evidenceSnippets: [
+        {
+          snippetId: "chk_trans_plan_p22_002",
+          documentTitle: "Transportation_Master_Plan_2030.pdf",
+          pageNumber: 22,
+          similarityScore: 0.865,
+          rank: 1,
+          department: "Department of Transportation",
+          text: "Capital Procurement Item: Multi-year arterial resurfacing contract awarded under CTR-2023-142 with guaranteed price cap of $4.8M through Q1 2026.",
+        },
+      ],
+      retrievalMetadata: {
+        vectorStore: "Qdrant HNSW",
+        topK: 5,
+        scoreThreshold: 0.65,
+        totalRetrievedChunks: 1,
+        searchLatencyMs: 11.2,
+      },
+      modelIdentifier: "gemini-2.5-flash",
+      limitations: [
+        "Grounding Boundary: Synthesized exclusively from retrieved municipal records. Content not present in the indexed document repository cannot be attested.",
+        "Temporal Scope: Factual information reflects document publication dates and may not reflect subsequent legislative actions, emergency resolutions, or revised budget amendments.",
+        "Advisory Notice: Automated civic analysis is intended for public transparency and research assistance and does not constitute formal legal counsel or official certified municipal audit.",
+        "Evidence Inspection: Citizens can independently verify each claim by inspecting the exact verbatim excerpts and page citations in the provenance drawer.",
+      ],
+      confidence: {
+        isGrounded: true,
+        evidenceCount: 1,
+        meanSimilarityScore: 0.865,
+        minSimilarityScore: 0.865,
+        maxSimilarityScore: 0.865,
+        scoreMetric: "cosine_similarity",
+        verifiabilityRating: "moderate",
+        explanation: "Answer is backed by 1 verified excerpt(s) across 1 source document(s) with an average cosine similarity of 0.8650 (range: 0.8650 - 0.8650).",
+        evaluationBasis: "Empirical vector cosine similarity and source evidence coverage without statistical inflation",
+      },
+    },
     calculation: {
       query: "SELECT vendor_name, contract_id, department, contract_value FROM vendor_contracts WHERE is_active = 1 AND contract_value > 2000000 ORDER BY contract_value DESC;",
       executionTimeMs: 12,
@@ -349,6 +509,54 @@ export const MOCK_QUERY_SESSIONS: QuerySession[] = [
         highlightWords: ["Downtown Bikeway Phase II", "Q3 2024"],
       },
     ],
+    trust: {
+      answer: "The Downtown Bikeway Phase II (Project ID PRJ-011) has an allocated budget of $3,400,000, with $2,100,000 spent to date. The project is currently 62.5% complete and remains on schedule for completion in 2024-Q3 under the Department of Transportation.",
+      sourceDocuments: [
+        {
+          documentTitle: "Transportation_Master_Plan_2030.pdf",
+          pageNumbers: [31],
+          chunkCount: 1,
+          department: "Department of Transportation",
+        },
+      ],
+      pageNumbers: [31],
+      evidenceSnippets: [
+        {
+          snippetId: "chk_trans_plan_p31_004",
+          documentTitle: "Transportation_Master_Plan_2030.pdf",
+          pageNumber: 31,
+          similarityScore: 0.899,
+          rank: 1,
+          department: "Department of Transportation",
+          text: "Milestone 4: Downtown Bikeway Phase II active installation covers 4.2 miles of protected cycle track connecting the central railway terminal to university campus, with targeted delivery in Q3 2024.",
+        },
+      ],
+      retrievalMetadata: {
+        vectorStore: "Qdrant HNSW",
+        topK: 5,
+        scoreThreshold: 0.65,
+        totalRetrievedChunks: 1,
+        searchLatencyMs: 13.5,
+      },
+      modelIdentifier: "gemini-2.5-flash",
+      limitations: [
+        "Grounding Boundary: Synthesized exclusively from retrieved municipal records. Content not present in the indexed document repository cannot be attested.",
+        "Temporal Scope: Factual information reflects document publication dates and may not reflect subsequent legislative actions, emergency resolutions, or revised budget amendments.",
+        "Advisory Notice: Automated civic analysis is intended for public transparency and research assistance and does not constitute formal legal counsel or official certified municipal audit.",
+        "Evidence Inspection: Citizens can independently verify each claim by inspecting the exact verbatim excerpts and page citations in the provenance drawer.",
+      ],
+      confidence: {
+        isGrounded: true,
+        evidenceCount: 1,
+        meanSimilarityScore: 0.899,
+        minSimilarityScore: 0.899,
+        maxSimilarityScore: 0.899,
+        scoreMetric: "cosine_similarity",
+        verifiabilityRating: "moderate",
+        explanation: "Answer is backed by 1 verified excerpt(s) across 1 source document(s) with an average cosine similarity of 0.8990 (range: 0.8990 - 0.8990).",
+        evaluationBasis: "Empirical vector cosine similarity and source evidence coverage without statistical inflation",
+      },
+    },
     calculation: {
       query: "SELECT project_id, project_name, budget_allocated, spent_to_date, completion_pct, status FROM capital_projects WHERE project_id = 'PRJ-011';",
       executionTimeMs: 15,

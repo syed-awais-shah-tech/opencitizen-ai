@@ -1,8 +1,8 @@
-"""Data models for RAG pipeline execution."""
-
+from typing import Optional
 from pydantic import BaseModel, Field
 
 from app.schemas.query import CitationItem
+from app.trust.models import TrustReport
 
 
 class RAGResponse(BaseModel):
@@ -37,4 +37,8 @@ class RAGResponse(BaseModel):
         default=0.0,
         ge=0.0,
         description="Total RAG execution time in milliseconds",
+    )
+    trust: Optional[TrustReport] = Field(
+        default=None,
+        description="Structured Trust Layer audit report providing auditable provenance",
     )

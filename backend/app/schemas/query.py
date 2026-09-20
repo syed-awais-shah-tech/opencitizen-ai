@@ -1,7 +1,7 @@
-"""Pydantic schemas for natural language queries and evidence-grounded answers."""
-
 from typing import Any, Optional
 from pydantic import BaseModel, Field
+
+from app.trust.models import TrustReport
 
 
 class QueryRequest(BaseModel):
@@ -73,4 +73,8 @@ class QueryResponse(BaseModel):
     )
     status: str = Field(
         default="completed", description="Execution status of the query pipeline"
+    )
+    trust: Optional[TrustReport] = Field(
+        default=None,
+        description="Structured Trust Layer report providing transparent evidence provenance",
     )

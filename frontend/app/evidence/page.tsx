@@ -75,10 +75,10 @@ export default function EvidencePage() {
 
         <div className="glass-card" style={{ padding: "18px 20px" }}>
           <div style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: "6px" }}>
-            Hallucination Score
+            Grounding Status
           </div>
           <div style={{ fontSize: "1.8rem", fontWeight: 800, color: "var(--accent-emerald)" }}>
-            0.0%
+            Verified
           </div>
           <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "4px" }}>
             Ungrounded claims rejected

@@ -94,6 +94,7 @@ class QueryService:
             latency_ms=elapsed_ms,
             is_placeholder=rag_response.is_insufficient_evidence,
             status="completed",
+            trust=rag_response.trust,
         )
 
 

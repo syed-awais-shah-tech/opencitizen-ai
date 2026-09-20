@@ -21,6 +21,7 @@ from app.schemas.query import CitationItem
 from app.search.dependencies import get_vector_search_service
 from app.search.models import VectorSearchResult
 from app.search.service import VectorSearchService
+from app.trust.builder import build_trust_report
 
 logger = logging.getLogger(__name__)
 
@@ -79,12 +80,14 @@ class RAGPipeline:
             threshold,
         )
 
+        search_start = time.perf_counter()
         search_results: list[VectorSearchResult] = self.vector_service.search(
             query=processed_question,
             top_k=k,
             score_threshold=threshold,
             filter_document_id=filter_document_id,
         )
+        search_latency_ms = round((time.perf_counter() - search_start) * 1000, 2)
 
         # Step 3: Extract relevant chunks into evidence contexts
         contexts: list[EvidenceContext] = [
@@ -104,6 +107,15 @@ class RAGPipeline:
         # Step 4: Handle zero retrieval results immediately
         if not contexts:
             logger.info("No relevant chunks retrieved; asserting insufficient evidence")
+            trust_report = build_trust_report(
+                answer=INSUFFICIENT_EVIDENCE_PHRASE,
+                evidence_items=[],
+                model_identifier=self.ai_provider.model_name,
+                top_k=k,
+                score_threshold=threshold,
+                search_latency_ms=search_latency_ms,
+                is_insufficient_evidence=True,
+            )
             return RAGResponse(
                 question=processed_question,
                 answer=INSUFFICIENT_EVIDENCE_PHRASE,
@@ -112,6 +124,7 @@ class RAGPipeline:
                 is_insufficient_evidence=True,
                 model_name=self.ai_provider.model_name,
                 latency_ms=elapsed_ms,
+                trust=trust_report,
             )
 
         # Step 5: Send evidence to Gemini / AI Provider
@@ -131,6 +144,15 @@ class RAGPipeline:
         # Step 6: Format citations and grounded answer
         if llm_answer.is_insufficient_evidence:
             logger.info("AI provider indicated evidence was insufficient to answer")
+            trust_report = build_trust_report(
+                answer=INSUFFICIENT_EVIDENCE_PHRASE,
+                evidence_items=contexts,
+                model_identifier=llm_answer.model_name,
+                top_k=k,
+                score_threshold=threshold,
+                search_latency_ms=search_latency_ms,
+                is_insufficient_evidence=True,
+            )
             return RAGResponse(
                 question=processed_question,
                 answer=INSUFFICIENT_EVIDENCE_PHRASE,
@@ -139,6 +161,7 @@ class RAGPipeline:
                 is_insufficient_evidence=True,
                 model_name=llm_answer.model_name,
                 latency_ms=total_elapsed_ms,
+                trust=trust_report,
             )
 
         # Build citation items preserving source and page metadata
@@ -155,6 +178,16 @@ class RAGPipeline:
                 )
             )
 
+        trust_report = build_trust_report(
+            answer=llm_answer.answer_text,
+            evidence_items=contexts,
+            model_identifier=llm_answer.model_name,
+            top_k=k,
+            score_threshold=threshold,
+            search_latency_ms=search_latency_ms,
+            is_insufficient_evidence=False,
+        )
+
         return RAGResponse(
             question=processed_question,
             answer=llm_answer.answer_text,
@@ -163,6 +196,7 @@ class RAGPipeline:
             is_insufficient_evidence=False,
             model_name=llm_answer.model_name,
             latency_ms=total_elapsed_ms,
+            trust=trust_report,
         )
 
 
