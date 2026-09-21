@@ -165,8 +165,20 @@ class RAGPipeline:
             )
 
         # Build citation items preserving source and page metadata
+        # Filter citations to documents referenced by the AI model
+        referenced_titles = {ref.lower() for ref in llm_answer.citation_references}
+        if referenced_titles:
+            active_contexts = [
+                ctx for ctx in contexts
+                if ctx.document_title.lower() in referenced_titles
+            ]
+            if not active_contexts:
+                active_contexts = contexts
+        else:
+            active_contexts = contexts
+
         citations: list[CitationItem] = []
-        for ctx in contexts:
+        for ctx in active_contexts:
             citations.append(
                 CitationItem(
                     document_title=ctx.document_title,

@@ -170,32 +170,23 @@ class MockAIProvider(BaseAIProvider):
             )
 
         # Tokenize question terms to evaluate semantic relevance
-        q_tokens = set(re.findall(r"\w{4,}", question.lower()))
-        # Filter out common stop-words
-        stop_words = {
-            "what",
-            "where",
-            "when",
-            "which",
-            "could",
-            "would",
-            "should",
-            "about",
-            "there",
-            "their",
-            "total",
-            "were",
-            "been",
-            "from",
-            "with",
-            "have",
+        from app.search.lexical import STOPWORDS
+
+        q_tokens = set(re.findall(r"[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*", question.lower()))
+        civic_stops = STOPWORDS | {
+            "municipal", "city", "allocated", "budget", "records", "available",
+            "information", "under", "approved", "much", "many", "does", "annual",
         }
-        substantive_tokens = q_tokens - stop_words
+        substantive_tokens = {t for t in q_tokens if len(t) >= 3 and t not in civic_stops}
 
         matching_contexts: list[EvidenceContext] = []
         for ctx in contexts:
             ctx_lower = ctx.text.lower()
-            if any(token in ctx_lower for token in substantive_tokens):
+            matches = [token for token in substantive_tokens if token in ctx_lower]
+            if len(substantive_tokens) >= 3:
+                if len(matches) >= 2:
+                    matching_contexts.append(ctx)
+            elif len(matches) >= 1:
                 matching_contexts.append(ctx)
 
         if not matching_contexts:

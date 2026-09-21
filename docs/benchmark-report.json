@@ -1,0 +1,479 @@
+{
+  "report_id": "eval_67d4637c66",
+  "timestamp": "2026-09-21T00:09:20.997498+00:00",
+  "benchmark_version": "1.0.0",
+  "retrieval_mode": "hybrid",
+  "top_k": 5,
+  "score_threshold": null,
+  "overall_metrics": {
+    "total_queries": 12,
+    "retrieval_success_rate": 1.0,
+    "mean_chunk_recall": 1.0,
+    "mean_document_precision": 0.4375,
+    "citation_correctness_score": 1.0,
+    "mean_citation_precision": 1.0,
+    "mean_citation_recall": 1.0,
+    "answer_correctness_score": 0.9387,
+    "mean_criteria_match_rate": 1.0,
+    "mean_token_f1": 0.7956,
+    "unsupported_claims_rate": 0.0,
+    "total_unsupported_claims": 0,
+    "refusal_accuracy": 1.0,
+    "mean_latency_ms": 1.6,
+    "p50_latency_ms": 1.35,
+    "p90_latency_ms": 2.46,
+    "p95_latency_ms": 2.62,
+    "min_latency_ms": 1.15,
+    "max_latency_ms": 2.8
+  },
+  "per_query_results": [
+    {
+      "question_id": "BENCH-001",
+      "question": "What is the budget allocation approved under Resolution RES-2024-089 for public parks?",
+      "category": "budget",
+      "is_refusal_expected": false,
+      "actual_answer": "Based on municipal records: Under Resolution RES-2024-089, City Council approved the annual municipal budget, allocating 12.5 million dollars to public park maintenance and civic recreation facilities. [Source: city_annual_budget_2024.pdf, Page: 1]",
+      "actual_source_documents": [
+        "public_health_initiative.pdf",
+        "city_annual_budget_2024.pdf"
+      ],
+      "actual_chunk_ids": [
+        "chk_budget_01",
+        "chk_health_01",
+        "chk_health_02"
+      ],
+      "cited_document_titles": [
+        "city_annual_budget_2024.pdf"
+      ],
+      "is_insufficient_evidence": false,
+      "retrieval_success": true,
+      "chunk_recall": 1.0,
+      "document_precision": 0.5,
+      "citation_correctness": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "answer_correctness": 0.904,
+      "criteria_match_rate": 1.0,
+      "token_f1": 0.68,
+      "unsupported_claims_count": 0,
+      "has_unsupported_claims": false,
+      "unsupported_claims_detail": [],
+      "search_latency_ms": 1.53,
+      "total_latency_ms": 2.25
+    },
+    {
+      "question_id": "BENCH-002",
+      "question": "How much emergency funding did the transportation department receive for road and bridge repairs?",
+      "category": "budget",
+      "is_refusal_expected": false,
+      "actual_answer": "Based on municipal records: The transportation department received emergency capital funding of 45 million dollars specifically earmarked for critical pothole repairs, roadway resurfacing, and bridge safety overhauls. [Source: city_annual_budget_2024.pdf, Page: 2]",
+      "actual_source_documents": [
+        "municipal_zoning_code.pdf",
+        "public_health_initiative.pdf",
+        "city_annual_budget_2024.pdf",
+        "transit_electrification_plan.pdf"
+      ],
+      "actual_chunk_ids": [
+        "chk_budget_02",
+        "chk_zoning_01",
+        "chk_health_02",
+        "chk_health_01",
+        "chk_transit_02"
+      ],
+      "cited_document_titles": [
+        "city_annual_budget_2024.pdf"
+      ],
+      "is_insufficient_evidence": false,
+      "retrieval_success": true,
+      "chunk_recall": 1.0,
+      "document_precision": 0.25,
+      "citation_correctness": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "answer_correctness": 0.9444,
+      "criteria_match_rate": 1.0,
+      "token_f1": 0.8148,
+      "unsupported_claims_count": 0,
+      "has_unsupported_claims": false,
+      "unsupported_claims_detail": [],
+      "search_latency_ms": 1.43,
+      "total_latency_ms": 2.48
+    },
+    {
+      "question_id": "BENCH-003",
+      "question": "What healthcare and wellness services are available for children during the summer?",
+      "category": "healthcare",
+      "is_refusal_expected": false,
+      "actual_answer": "Based on municipal records: Municipal community healthcare clinics will offer free pediatric wellness examinations and comprehensive routine immunizations for children under age 12 throughout the summer. [Source: public_health_initiative.pdf, Page: 1]",
+      "actual_source_documents": [
+        "public_health_initiative.pdf",
+        "drinking_water_quality_report.pdf",
+        "city_annual_budget_2024.pdf"
+      ],
+      "actual_chunk_ids": [
+        "chk_health_01",
+        "chk_health_02",
+        "chk_water_02",
+        "chk_water_01",
+        "chk_budget_01"
+      ],
+      "cited_document_titles": [
+        "public_health_initiative.pdf",
+        "public_health_initiative.pdf"
+      ],
+      "is_insufficient_evidence": false,
+      "retrieval_success": true,
+      "chunk_recall": 1.0,
+      "document_precision": 0.3333,
+      "citation_correctness": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "answer_correctness": 0.9423,
+      "criteria_match_rate": 1.0,
+      "token_f1": 0.8077,
+      "unsupported_claims_count": 0,
+      "has_unsupported_claims": false,
+      "unsupported_claims_detail": [],
+      "search_latency_ms": 1.03,
+      "total_latency_ms": 1.44
+    },
+    {
+      "question_id": "BENCH-004",
+      "question": "What adult preventive care screenings are offered under Community Wellness Initiative CWI-24?",
+      "category": "healthcare",
+      "is_refusal_expected": false,
+      "actual_answer": "Based on municipal records: Adult preventive care programs will provide free blood pressure, cholesterol, and diabetes screenings at community centers every second Saturday under the Community Wellness Initiative CWI-24. [Source: public_health_initiative.pdf, Page: 2]",
+      "actual_source_documents": [
+        "public_health_initiative.pdf",
+        "drinking_water_quality_report.pdf",
+        "city_annual_budget_2024.pdf"
+      ],
+      "actual_chunk_ids": [
+        "chk_health_02",
+        "chk_health_01",
+        "chk_budget_01",
+        "chk_budget_02",
+        "chk_water_01"
+      ],
+      "cited_document_titles": [
+        "public_health_initiative.pdf",
+        "public_health_initiative.pdf"
+      ],
+      "is_insufficient_evidence": false,
+      "retrieval_success": true,
+      "chunk_recall": 1.0,
+      "document_precision": 0.3333,
+      "citation_correctness": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "answer_correctness": 0.9073,
+      "criteria_match_rate": 1.0,
+      "token_f1": 0.6909,
+      "unsupported_claims_count": 0,
+      "has_unsupported_claims": false,
+      "unsupported_claims_detail": [],
+      "search_latency_ms": 0.99,
+      "total_latency_ms": 1.35
+    },
+    {
+      "question_id": "BENCH-005",
+      "question": "What are the commercial structural setback and height limits under Zoning Ordinance ORD-2023-45?",
+      "category": "zoning",
+      "is_refusal_expected": false,
+      "actual_answer": "Based on municipal records: Zoning Ordinance ORD-2023-45 regulates commercial structural setbacks, establishing a minimum building setback of 25 feet from arterial roadways and a maximum roofline height limit of 60 feet. [Source: municipal_zoning_code.pdf, Page: 1]",
+      "actual_source_documents": [
+        "municipal_zoning_code.pdf",
+        "public_health_initiative.pdf",
+        "city_annual_budget_2024.pdf"
+      ],
+      "actual_chunk_ids": [
+        "chk_zoning_01",
+        "chk_zoning_02",
+        "chk_health_02",
+        "chk_budget_01",
+        "chk_budget_02"
+      ],
+      "cited_document_titles": [
+        "municipal_zoning_code.pdf",
+        "municipal_zoning_code.pdf"
+      ],
+      "is_insufficient_evidence": false,
+      "retrieval_success": true,
+      "chunk_recall": 1.0,
+      "document_precision": 0.3333,
+      "citation_correctness": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "answer_correctness": 0.9226,
+      "criteria_match_rate": 1.0,
+      "token_f1": 0.7419,
+      "unsupported_claims_count": 0,
+      "has_unsupported_claims": false,
+      "unsupported_claims_detail": [],
+      "search_latency_ms": 1.03,
+      "total_latency_ms": 1.4
+    },
+    {
+      "question_id": "BENCH-006",
+      "question": "What building height and rear yard requirements apply to residential district R-1?",
+      "category": "zoning",
+      "is_refusal_expected": false,
+      "actual_answer": "Based on municipal records: Residential zoning district R-1 permits single-family detached dwellings with a maximum residential building height restriction of 35 feet and mandatory rear yard depth of 20 feet. [Source: municipal_zoning_code.pdf, Page: 2]",
+      "actual_source_documents": [
+        "municipal_zoning_code.pdf",
+        "drinking_water_quality_report.pdf",
+        "city_annual_budget_2024.pdf",
+        "transit_electrification_plan.pdf"
+      ],
+      "actual_chunk_ids": [
+        "chk_zoning_02",
+        "chk_zoning_01",
+        "chk_water_02",
+        "chk_budget_01",
+        "chk_transit_02"
+      ],
+      "cited_document_titles": [
+        "municipal_zoning_code.pdf",
+        "municipal_zoning_code.pdf"
+      ],
+      "is_insufficient_evidence": false,
+      "retrieval_success": true,
+      "chunk_recall": 1.0,
+      "document_precision": 0.25,
+      "citation_correctness": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "answer_correctness": 0.9164,
+      "criteria_match_rate": 1.0,
+      "token_f1": 0.7213,
+      "unsupported_claims_count": 0,
+      "has_unsupported_claims": false,
+      "unsupported_claims_detail": [],
+      "search_latency_ms": 0.99,
+      "total_latency_ms": 1.34
+    },
+    {
+      "question_id": "BENCH-007",
+      "question": "What vehicle procurement was authorized under contract CTR-2023-142?",
+      "category": "transit",
+      "is_refusal_expected": false,
+      "actual_answer": "Based on municipal records: Under procurement contract CTR-2023-142, the Metropolitan Transit Authority authorized the acquisition of thirty zero-emission battery-electric heavy-duty transit buses. [Source: transit_electrification_plan.pdf, Page: 1]",
+      "actual_source_documents": [
+        "municipal_zoning_code.pdf",
+        "public_health_initiative.pdf",
+        "city_annual_budget_2024.pdf",
+        "transit_electrification_plan.pdf"
+      ],
+      "actual_chunk_ids": [
+        "chk_transit_01",
+        "chk_budget_02",
+        "chk_zoning_01",
+        "chk_transit_02",
+        "chk_health_01"
+      ],
+      "cited_document_titles": [
+        "transit_electrification_plan.pdf",
+        "transit_electrification_plan.pdf"
+      ],
+      "is_insufficient_evidence": false,
+      "retrieval_success": true,
+      "chunk_recall": 1.0,
+      "document_precision": 0.25,
+      "citation_correctness": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "answer_correctness": 0.9318,
+      "criteria_match_rate": 1.0,
+      "token_f1": 0.7727,
+      "unsupported_claims_count": 0,
+      "has_unsupported_claims": false,
+      "unsupported_claims_detail": [],
+      "search_latency_ms": 0.93,
+      "total_latency_ms": 1.3
+    },
+    {
+      "question_id": "BENCH-008",
+      "question": "When will full route electrification for Line-42 be completed, and what infrastructure is included?",
+      "category": "transit",
+      "is_refusal_expected": false,
+      "actual_answer": "Based on municipal records: Full route electrification for urban transit Line-42 is slated for completion in Q3 2025, including overhead pantograph rapid-charging stations at the East Terminus. [Source: transit_electrification_plan.pdf, Page: 2]",
+      "actual_source_documents": [
+        "municipal_zoning_code.pdf",
+        "public_health_initiative.pdf",
+        "city_annual_budget_2024.pdf",
+        "transit_electrification_plan.pdf"
+      ],
+      "actual_chunk_ids": [
+        "chk_transit_02",
+        "chk_health_02",
+        "chk_health_01",
+        "chk_zoning_01",
+        "chk_budget_02"
+      ],
+      "cited_document_titles": [
+        "transit_electrification_plan.pdf"
+      ],
+      "is_insufficient_evidence": false,
+      "retrieval_success": true,
+      "chunk_recall": 1.0,
+      "document_precision": 0.25,
+      "citation_correctness": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "answer_correctness": 0.94,
+      "criteria_match_rate": 1.0,
+      "token_f1": 0.8,
+      "unsupported_claims_count": 0,
+      "has_unsupported_claims": false,
+      "unsupported_claims_detail": [],
+      "search_latency_ms": 2.34,
+      "total_latency_ms": 2.8
+    },
+    {
+      "question_id": "BENCH-009",
+      "question": "What were the quarterly findings regarding drinking water lead and copper under EPA-502.2?",
+      "category": "water",
+      "is_refusal_expected": false,
+      "actual_answer": "Based on municipal records: In compliance with EPA-502.2 regulatory guidelines, quarterly chemical analyses detected zero trace lead or copper contamination exceeding federal action thresholds across all municipal taps. [Source: drinking_water_quality_report.pdf, Page: 1]",
+      "actual_source_documents": [
+        "drinking_water_quality_report.pdf",
+        "city_annual_budget_2024.pdf"
+      ],
+      "actual_chunk_ids": [
+        "chk_water_01",
+        "chk_water_02",
+        "chk_budget_01",
+        "chk_budget_02"
+      ],
+      "cited_document_titles": [
+        "drinking_water_quality_report.pdf",
+        "drinking_water_quality_report.pdf"
+      ],
+      "is_insufficient_evidence": false,
+      "retrieval_success": true,
+      "chunk_recall": 1.0,
+      "document_precision": 0.5,
+      "citation_correctness": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "answer_correctness": 0.9483,
+      "criteria_match_rate": 1.0,
+      "token_f1": 0.8276,
+      "unsupported_claims_count": 0,
+      "has_unsupported_claims": false,
+      "unsupported_claims_detail": [],
+      "search_latency_ms": 0.92,
+      "total_latency_ms": 1.29
+    },
+    {
+      "question_id": "BENCH-010",
+      "question": "How is drinking water clarity and purity verified at the North Reservoir?",
+      "category": "water",
+      "is_refusal_expected": false,
+      "actual_answer": "Based on municipal records: Continuous automated turbidity sensors and biological monitors at the North Reservoir confirmed drinking water clarity and purity consistently exceeded state environmental benchmarks. [Source: drinking_water_quality_report.pdf, Page: 2]",
+      "actual_source_documents": [
+        "public_health_initiative.pdf",
+        "drinking_water_quality_report.pdf",
+        "city_annual_budget_2024.pdf",
+        "transit_electrification_plan.pdf"
+      ],
+      "actual_chunk_ids": [
+        "chk_water_02",
+        "chk_transit_02",
+        "chk_budget_01",
+        "chk_budget_02",
+        "chk_health_01"
+      ],
+      "cited_document_titles": [
+        "drinking_water_quality_report.pdf"
+      ],
+      "is_insufficient_evidence": false,
+      "retrieval_success": true,
+      "chunk_recall": 1.0,
+      "document_precision": 0.25,
+      "citation_correctness": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "answer_correctness": 0.9073,
+      "criteria_match_rate": 1.0,
+      "token_f1": 0.6909,
+      "unsupported_claims_count": 0,
+      "has_unsupported_claims": false,
+      "unsupported_claims_detail": [],
+      "search_latency_ms": 0.91,
+      "total_latency_ms": 1.24
+    },
+    {
+      "question_id": "BENCH-011",
+      "question": "What is the municipal budget allocated for deep space satellite launches and orbital research?",
+      "category": "unsupported",
+      "is_refusal_expected": true,
+      "actual_answer": "The available evidence is insufficient to answer this question.",
+      "actual_source_documents": [
+        "municipal_zoning_code.pdf",
+        "public_health_initiative.pdf",
+        "drinking_water_quality_report.pdf",
+        "city_annual_budget_2024.pdf"
+      ],
+      "actual_chunk_ids": [
+        "chk_health_01",
+        "chk_budget_01",
+        "chk_water_01",
+        "chk_zoning_01",
+        "chk_water_02"
+      ],
+      "cited_document_titles": [],
+      "is_insufficient_evidence": true,
+      "retrieval_success": true,
+      "chunk_recall": 1.0,
+      "document_precision": 1.0,
+      "citation_correctness": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "answer_correctness": 1.0,
+      "criteria_match_rate": 1.0,
+      "token_f1": 1.0,
+      "unsupported_claims_count": 0,
+      "has_unsupported_claims": false,
+      "unsupported_claims_detail": [],
+      "search_latency_ms": 0.97,
+      "total_latency_ms": 1.15
+    },
+    {
+      "question_id": "BENCH-012",
+      "question": "Which Hollywood actors were paid by the city for commercial filming permits in 2024?",
+      "category": "unsupported",
+      "is_refusal_expected": true,
+      "actual_answer": "The available evidence is insufficient to answer this question.",
+      "actual_source_documents": [
+        "municipal_zoning_code.pdf",
+        "drinking_water_quality_report.pdf",
+        "city_annual_budget_2024.pdf",
+        "transit_electrification_plan.pdf"
+      ],
+      "actual_chunk_ids": [
+        "chk_budget_01",
+        "chk_zoning_02",
+        "chk_zoning_01",
+        "chk_water_02",
+        "chk_transit_02"
+      ],
+      "cited_document_titles": [],
+      "is_insufficient_evidence": true,
+      "retrieval_success": true,
+      "chunk_recall": 1.0,
+      "document_precision": 1.0,
+      "citation_correctness": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "answer_correctness": 1.0,
+      "criteria_match_rate": 1.0,
+      "token_f1": 1.0,
+      "unsupported_claims_count": 0,
+      "has_unsupported_claims": false,
+      "unsupported_claims_detail": [],
+      "search_latency_ms": 0.97,
+      "total_latency_ms": 1.16
+    }
+  ]
+}

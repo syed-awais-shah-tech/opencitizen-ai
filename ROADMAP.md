@@ -56,8 +56,8 @@ This roadmap outlines the planned development phases for OpenCitizen AI. In acco
 
 ---
 
-## Milestone 5: Verification, Auditability & Polish [Planned]
+## Milestone 5: Verification, Auditability & Polish [In Progress]
 * [ ] End-to-end integration test suite
 * [ ] Export audit reports (PDF/JSON summaries of findings with full source citations)
-* [ ] Performance benchmarking (query latency, embedding generation speed)
+* [x] Performance and quality benchmarking framework (retrieval success, citation correctness, answer accuracy, unsupported claims, latency)
 * [ ] Production deployment documentation and security hardening
