@@ -26,7 +26,7 @@ class DocumentItem(BaseModel):
     page_count: int = Field(default=0, description="Total number of pages")
     chunk_count: int = Field(default=0, description="Extracted vector chunks")
     size_bytes: int = Field(default=0, description="Document size in bytes")
-    status: Literal["ready", "processing", "pending", "failed"] = Field(
+    status: Literal["ready", "processing", "pending", "failed", "queued", "completed"] = Field(
         default="ready", description="Ingestion and vectorization status"
     )
     department: str = Field(..., description="Issuing municipal agency or department")
@@ -48,11 +48,15 @@ class DocumentListResponse(BaseModel):
 
 
 class UploadDocumentResponse(BaseModel):
-    """Response returned upon successful PDF document ingestion and chunking."""
+    """Response returned upon PDF document upload and ingestion job creation."""
 
+    job_id: str = Field(default="", description="Ingestion processing job identifier")
+    job_status: Literal["queued", "processing", "completed", "failed"] = Field(
+        default="queued", description="Lifecycle status of the ingestion job"
+    )
     document: DocumentItem = Field(..., description="Persisted document entity")
-    total_pages: int = Field(..., description="Total pages in the PDF")
-    processed_pages: int = Field(..., description="Pages with extractable text")
-    total_chunks: int = Field(..., description="Total structured chunks created")
+    total_pages: int = Field(default=0, description="Total pages in the PDF")
+    processed_pages: int = Field(default=0, description="Pages with extractable text")
+    total_chunks: int = Field(default=0, description="Total structured chunks created")
     warnings: list[str] = Field(default_factory=list, description="Non-fatal parsing warnings")
-    processing_time_ms: float = Field(..., description="Ingestion latency in milliseconds")
+    processing_time_ms: float = Field(default=0.0, description="Ingestion latency in milliseconds")

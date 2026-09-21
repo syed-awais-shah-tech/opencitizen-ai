@@ -82,12 +82,14 @@ def test_upload_pdf_document(client: TestClient) -> None:
         "department": "Finance",
         "category": "Budget",
         "summary": "Annual revenue and tax collection overview.",
+        "sync": "true",
     }
 
     response = client.post("/api/v1/documents/upload", files=files, data=data)
     assert response.status_code == 201
     res_data = response.json()
 
+    assert res_data["job_id"].startswith("job_")
     assert res_data["total_pages"] == 2
     assert res_data["processed_pages"] == 2
     assert res_data["total_chunks"] >= 2

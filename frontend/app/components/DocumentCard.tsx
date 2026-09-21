@@ -57,10 +57,27 @@ export default function DocumentCard({ doc, onClick }: DocumentCardProps) {
           <span className="badge badge-purple" style={{ fontSize: "0.68rem" }}>
             {doc.category}
           </span>
-          <span className="badge badge-emerald" style={{ fontSize: "0.68rem" }}>
-            <span className="badge-dot" />
-            {doc.status.toUpperCase()}
-          </span>
+          {doc.status === "completed" || doc.status === "ready" ? (
+            <span className="badge badge-emerald" style={{ fontSize: "0.68rem" }}>
+              <span className="badge-dot" />
+              READY
+            </span>
+          ) : doc.status === "processing" ? (
+            <span className="badge badge-cyan" style={{ fontSize: "0.68rem" }}>
+              <span className="badge-dot-pulsing" />
+              {doc.stage ? doc.stage.toUpperCase() : "PROCESSING"}
+            </span>
+          ) : doc.status === "queued" ? (
+            <span className="badge badge-amber" style={{ fontSize: "0.68rem" }}>
+              <span className="badge-dot" />
+              QUEUED
+            </span>
+          ) : (
+            <span className="badge badge-rose" style={{ fontSize: "0.68rem" }}>
+              <span className="badge-dot" />
+              FAILED
+            </span>
+          )}
         </div>
       </div>
 

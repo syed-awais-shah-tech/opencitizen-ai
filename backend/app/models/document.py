@@ -40,3 +40,4 @@ class Document(Base):
     # Relationships
     uploaded_file = relationship("UploadedFile")
     citations = relationship("Citation", back_populates="document")
+    jobs = relationship("IngestionJob", back_populates="document", cascade="all, delete-orphan")

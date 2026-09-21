@@ -31,9 +31,20 @@ TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_
 @pytest.fixture(autouse=True)
 def init_test_db() -> Generator[None, None, None]:
     """Create all schema tables before each test and drop them afterwards."""
+    from app.search.dependencies import (
+        get_bm25_index_instance,
+        get_vector_store_instance,
+    )
+    from app.services.ingestion_worker import ingestion_worker
+
+    get_vector_store_instance.cache_clear()
+    get_bm25_index_instance.cache_clear()
+    ingestion_worker.set_session_factory(TestingSessionLocal)
     Base.metadata.create_all(bind=test_engine)
     yield
     Base.metadata.drop_all(bind=test_engine)
+    get_vector_store_instance.cache_clear()
+    get_bm25_index_instance.cache_clear()
 
 
 @pytest.fixture

@@ -13,10 +13,14 @@ export interface DocumentItem {
   pageCount: number;
   chunkCount: number;
   size: string;
-  status: "ready" | "processing" | "pending";
+  status: "ready" | "processing" | "pending" | "queued" | "completed" | "failed";
   date: string;
   department: string;
   summary: string;
+  jobId?: string;
+  stage?: "queued" | "extraction" | "chunking" | "embedding" | "vector_storage" | "completed" | "failed";
+  progressPct?: number;
+  errorMessage?: string;
 }
 
 export interface DatasetColumn {
@@ -232,6 +236,52 @@ export const MOCK_DOCUMENTS: DocumentItem[] = [
     date: "Sep 08, 2026",
     department: "Sustainability Office",
     summary: "Municipal solar rooftop array targets and civic building energy benchmarking data.",
+  },
+  {
+    id: "doc-6",
+    title: "Green_Infrastructure_Stormwater_Report_2025.pdf",
+    category: "Environment",
+    pageCount: 28,
+    chunkCount: 64,
+    size: "3.7 MB",
+    status: "processing",
+    stage: "embedding",
+    progressPct: 70,
+    jobId: "job_green_infra_001",
+    date: "Sep 21, 2026",
+    department: "Public Works & Water Management",
+    summary: "Bioswale performance assessments, urban stormwater retention metrics, and permeable pavement rollout.",
+  },
+  {
+    id: "doc-7",
+    title: "Housing_Affordability_Incentive_Study_2026.pdf",
+    category: "Urban Planning",
+    pageCount: 52,
+    chunkCount: 0,
+    size: "6.2 MB",
+    status: "queued",
+    stage: "queued",
+    progressPct: 0,
+    jobId: "job_housing_study_002",
+    date: "Sep 21, 2026",
+    department: "Community Development",
+    summary: "Incentive zoning frameworks, density bonuses, and affordable housing trust fund projections.",
+  },
+  {
+    id: "doc-8",
+    title: "Corrupted_Zoning_Map_Addendum_Draft.pdf",
+    category: "Urban Planning",
+    pageCount: 4,
+    chunkCount: 0,
+    size: "1.8 MB",
+    status: "failed",
+    stage: "extraction",
+    progressPct: 20,
+    jobId: "job_corrupted_addendum_003",
+    errorMessage: "ExtractionError: PDF page 1 text stream was unreadable or malformed.",
+    date: "Sep 20, 2026",
+    department: "Zoning Board",
+    summary: "Draft amendment for commercial district rezoning and set-back boundaries.",
   },
 ];
 
