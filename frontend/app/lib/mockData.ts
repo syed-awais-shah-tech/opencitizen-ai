@@ -42,6 +42,38 @@ export interface DatasetPreviewData {
   sampleRows: Record<string, any>[];
 }
 
+export interface GeographicMetadataData {
+  crs: string;
+  hasGeospatial: boolean;
+  bbox?: [number, number, number, number];
+  center?: [number, number];
+  featureCount: number;
+  validFeatures: number;
+  invalidFeatures: number;
+  latitudeColumn?: string;
+  longitudeColumn?: string;
+  geometryTypes?: string[];
+}
+
+export interface GeoJSONGeometryData {
+  type: string;
+  coordinates: any;
+}
+
+export interface GeoJSONFeatureData {
+  type: "Feature";
+  id?: string | number;
+  geometry: GeoJSONGeometryData;
+  properties: Record<string, any>;
+}
+
+export interface GeoJSONFeatureCollectionData {
+  type: "FeatureCollection";
+  bbox?: [number, number, number, number];
+  features: GeoJSONFeatureData[];
+  metadata?: GeographicMetadataData;
+}
+
 export interface DatasetItem {
   id: string;
   name: string;
@@ -61,6 +93,8 @@ export interface DatasetItem {
   retrievalDate?: string;
   originalFormat?: string;
   processingMetadata?: Record<string, any>;
+  hasGeospatial?: boolean;
+  geographicMetadata?: GeographicMetadataData;
 }
 
 export interface CitationData {
@@ -459,6 +493,19 @@ export const MOCK_DATASETS: DatasetItem[] = [
         "inferred_column_types",
       ],
     },
+    hasGeospatial: true,
+    geographicMetadata: {
+      crs: "EPSG:4326",
+      hasGeospatial: true,
+      bbox: [-97.770, 30.263, -97.740, 30.274],
+      center: [-97.7515, 30.2685],
+      featureCount: 3,
+      validFeatures: 3,
+      invalidFeatures: 0,
+      latitudeColumn: "latitude",
+      longitudeColumn: "longitude",
+      geometryTypes: ["Point"],
+    },
     columns: [
       { name: "project_id", type: "VARCHAR", missingCount: 0, nullPercentage: 0.0 },
       { name: "department", type: "VARCHAR", missingCount: 0, nullPercentage: 0.0 },
@@ -466,6 +513,8 @@ export const MOCK_DATASETS: DatasetItem[] = [
       { name: "allocated_budget", type: "DOUBLE", missingCount: 0, nullPercentage: 0.0 },
       { name: "expenditure_to_date", type: "DOUBLE", missingCount: 0, nullPercentage: 0.0 },
       { name: "completion_rate", type: "DOUBLE", missingCount: 0, nullPercentage: 0.0 },
+      { name: "latitude", type: "DOUBLE", missingCount: 0, nullPercentage: 0.0 },
+      { name: "longitude", type: "DOUBLE", missingCount: 0, nullPercentage: 0.0 },
     ],
     missingValueCounts: {
       project_id: 0,
@@ -474,11 +523,177 @@ export const MOCK_DATASETS: DatasetItem[] = [
       allocated_budget: 0,
       expenditure_to_date: 0,
       completion_rate: 0,
+      latitude: 0,
+      longitude: 0,
     },
     sampleRows: [
-      { project_id: "CIP-801", department: "Transportation", project_name: "Bikeway & Urban Trail Expansion", allocated_budget: 1200000, expenditure_to_date: 1020000, completion_rate: 0.85 },
-      { project_id: "CIP-802", department: "Parks & Rec", project_name: "Urban Greenway Canopy Renewal", allocated_budget: 450000, expenditure_to_date: 450000, completion_rate: 1.0 },
-      { project_id: "CIP-803", department: "Public Works", project_name: "Barton Springs Drainage Upgrade", allocated_budget: 2300000, expenditure_to_date: 920000, completion_rate: 0.40 },
+      { project_id: "CIP-801", department: "Transportation", project_name: "Bikeway & Urban Trail Expansion", allocated_budget: 1200000, expenditure_to_date: 1020000, completion_rate: 0.85, latitude: 30.2672, longitude: -97.7431 },
+      { project_id: "CIP-802", department: "Parks & Rec", project_name: "Urban Greenway Canopy Renewal", allocated_budget: 450000, expenditure_to_date: 450000, completion_rate: 1.0, latitude: 30.2740, longitude: -97.7400 },
+      { project_id: "CIP-803", department: "Public Works", project_name: "Barton Springs Drainage Upgrade", allocated_budget: 2300000, expenditure_to_date: 920000, completion_rate: 0.40, latitude: 30.2630, longitude: -97.7700 },
+    ],
+  },
+  {
+    id: "data-6",
+    name: "public_development_projects.csv",
+    category: "Public Works",
+    format: "CSV",
+    rowCount: "8",
+    columnsCount: 10,
+    tableName: "public_development_projects",
+    status: "active",
+    date: "Sep 21, 2026",
+    size: "340 KB",
+    sourceUrl: "https://data.austintexas.gov/resource/public_facilities_development.csv",
+    sourceName: "Austin Municipal Capital Development Agency",
+    retrievalDate: "2026-09-21T06:00:00Z",
+    originalFormat: "CSV",
+    hasGeospatial: true,
+    geographicMetadata: {
+      crs: "EPSG:4326",
+      hasGeospatial: true,
+      bbox: [-97.784, 30.231, -97.705, 30.345],
+      center: [-97.7445, 30.288],
+      featureCount: 8,
+      validFeatures: 8,
+      invalidFeatures: 0,
+      latitudeColumn: "latitude",
+      longitudeColumn: "longitude",
+      geometryTypes: ["Point"],
+    },
+    processingMetadata: {
+      content_sha256: "7e502b48e6bf1ad935cbb64b85c165ef9447432d665f8a0ef93bf81d1b32d659",
+      http_status_code: 200,
+      content_type: "text/csv; charset=utf-8",
+      fetch_elapsed_ms: 98.4,
+      connector_id: "civic_open_data",
+      transformations: [
+        "parsed_csv",
+        "normalized_column_identifiers",
+        "validated_geographic_coordinates",
+        "wgs84_bounding_box_calculated",
+      ],
+    },
+    columns: [
+      { name: "project_id", type: "VARCHAR", missingCount: 0, nullPercentage: 0.0 },
+      { name: "project_name", type: "VARCHAR", missingCount: 0, nullPercentage: 0.0 },
+      { name: "category", type: "VARCHAR", missingCount: 0, nullPercentage: 0.0 },
+      { name: "status", type: "VARCHAR", missingCount: 0, nullPercentage: 0.0 },
+      { name: "budget", type: "DOUBLE", missingCount: 0, nullPercentage: 0.0 },
+      { name: "spent_to_date", type: "DOUBLE", missingCount: 0, nullPercentage: 0.0 },
+      { name: "completion_pct", type: "DOUBLE", missingCount: 0, nullPercentage: 0.0 },
+      { name: "lead_agency", type: "VARCHAR", missingCount: 0, nullPercentage: 0.0 },
+      { name: "latitude", type: "DOUBLE", missingCount: 0, nullPercentage: 0.0 },
+      { name: "longitude", type: "DOUBLE", missingCount: 0, nullPercentage: 0.0 },
+    ],
+    missingValueCounts: {
+      project_id: 0,
+      project_name: 0,
+      category: 0,
+      status: 0,
+      budget: 0,
+      spent_to_date: 0,
+      completion_pct: 0,
+      lead_agency: 0,
+      latitude: 0,
+      longitude: 0,
+    },
+    sampleRows: [
+      {
+        project_id: "DEV-101",
+        project_name: "East Riverside Transit Hub & Affordable Housing",
+        category: "Transportation",
+        status: "In Progress",
+        budget: 4200000,
+        spent_to_date: 2730000,
+        completion_pct: 65.0,
+        lead_agency: "Transportation & Public Works",
+        latitude: 30.2450,
+        longitude: -97.7280,
+      },
+      {
+        project_id: "DEV-102",
+        project_name: "Barton Creek Greenbelt Ecological Restoration",
+        category: "Parks & Environment",
+        status: "Completed",
+        budget: 1850000,
+        spent_to_date: 1850000,
+        completion_pct: 100.0,
+        lead_agency: "Parks & Rec",
+        latitude: 30.2580,
+        longitude: -97.7840,
+      },
+      {
+        project_id: "DEV-103",
+        project_name: "Zilker Park Community Solar & Rec Facility",
+        category: "Parks & Environment",
+        status: "In Progress",
+        budget: 950000,
+        spent_to_date: 285000,
+        completion_pct: 30.0,
+        lead_agency: "Sustainability Office",
+        latitude: 30.2670,
+        longitude: -97.7710,
+      },
+      {
+        project_id: "DEV-104",
+        project_name: "Airport Boulevard Corridor Modernization",
+        category: "Transportation",
+        status: "Planned",
+        budget: 6800000,
+        spent_to_date: 0,
+        completion_pct: 0.0,
+        lead_agency: "Transportation Dept",
+        latitude: 30.3120,
+        longitude: -97.7150,
+      },
+      {
+        project_id: "DEV-105",
+        project_name: "Pleasant Valley Civic Health Clinic",
+        category: "Healthcare",
+        status: "In Progress",
+        budget: 3100000,
+        spent_to_date: 1550000,
+        completion_pct: 50.0,
+        lead_agency: "Public Health",
+        latitude: 30.2310,
+        longitude: -97.7120,
+      },
+      {
+        project_id: "DEV-106",
+        project_name: "Mueller Branch Library & Community Center",
+        category: "Public Facilities",
+        status: "Completed",
+        budget: 2400000,
+        spent_to_date: 2400000,
+        completion_pct: 100.0,
+        lead_agency: "Library Dept",
+        latitude: 30.3010,
+        longitude: -97.7050,
+      },
+      {
+        project_id: "DEV-107",
+        project_name: "North Lamar Stormwater & Bioswale Project",
+        category: "Infrastructure",
+        status: "In Progress",
+        budget: 1600000,
+        spent_to_date: 1280000,
+        completion_pct: 80.0,
+        lead_agency: "Watershed Protection",
+        latitude: 30.3450,
+        longitude: -97.7210,
+      },
+      {
+        project_id: "DEV-108",
+        project_name: "South Congress Pedestrian Safety Corridor",
+        category: "Transportation",
+        status: "Planned",
+        budget: 890000,
+        spent_to_date: 120000,
+        completion_pct: 15.0,
+        lead_agency: "Transportation Dept",
+        latitude: 30.2480,
+        longitude: -97.7530,
+      },
     ],
   },
 ];

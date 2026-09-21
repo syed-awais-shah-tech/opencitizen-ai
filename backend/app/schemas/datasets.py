@@ -77,6 +77,10 @@ class DatasetItem(BaseModel):
     processing_metadata: dict[str, Any] | None = Field(
         default=None, description="Audit and normalization processing metadata"
     )
+    # Geospatial capability flag (Stage 18)
+    has_geospatial: bool = Field(
+        default=False, description="Whether dataset contains geographic coordinates or geometry"
+    )
 
 
 class DatasetProvenance(BaseModel):

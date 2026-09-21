@@ -4,11 +4,13 @@ import React, { useState, useRef } from "react";
 import PageHeader from "../components/PageHeader";
 import DatasetCard from "../components/DatasetCard";
 import SqlTraceViewer from "../components/SqlTraceViewer";
+import GeospatialMapViewer from "../components/GeospatialMapViewer";
 import { MOCK_DATASETS, DatasetItem, CalculationData, DatasetPreviewData } from "../lib/mockData";
 
 export default function DatasetsPage() {
   const [datasets, setDatasets] = useState<DatasetItem[]>(MOCK_DATASETS);
   const [selectedDataset, setSelectedDataset] = useState<DatasetItem>(MOCK_DATASETS[0]);
+  const [datasetViewTab, setDatasetViewTab] = useState<"schema" | "map">("schema");
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
 
@@ -597,12 +599,86 @@ export default function DatasetsPage() {
               </div>
             )}
 
-            {/* Schema Table with Missing Value Counts */}
-            <div style={{ marginBottom: "20px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                <h4 style={{ fontSize: "0.82rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--text-muted)" }}>
-                  Column Definitions, Inferred Types & Null Statistics
-                </h4>
+            {/* View Mode Toggle Bar: Schema Table vs Geospatial Map */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "18px",
+                paddingBottom: "12px",
+                borderBottom: "1px solid var(--border-subtle)",
+                flexWrap: "wrap",
+                gap: "10px",
+              }}
+            >
+              <div style={{ display: "flex", gap: "8px" }}>
+                <button
+                  type="button"
+                  onClick={() => setDatasetViewTab("schema")}
+                  className={`btn ${datasetViewTab === "schema" ? "btn-primary" : "btn-secondary"}`}
+                  style={{ fontSize: "0.78rem", padding: "6px 14px" }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="3" y1="9" x2="21" y2="9"/>
+                    <line x1="3" y1="15" x2="21" y2="15"/>
+                    <line x1="9" y1="3" x2="9" y2="21"/>
+                    <line x1="15" y1="3" x2="15" y2="21"/>
+                  </svg>
+                  Schema & Data Table
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDatasetViewTab("map")}
+                  className={`btn ${datasetViewTab === "map" ? "btn-primary" : "btn-secondary"}`}
+                  style={{ fontSize: "0.78rem", padding: "6px 14px", display: "flex", alignItems: "center", gap: "6px" }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+                    <line x1="8" y1="2" x2="8" y2="18"/>
+                    <line x1="16" y1="6" x2="16" y2="22"/>
+                  </svg>
+                  Geographic Map View
+                  {selectedDataset.hasGeospatial && (
+                    <span
+                      style={{
+                        fontSize: "0.65rem",
+                        padding: "1px 6px",
+                        borderRadius: "10px",
+                        background: "rgba(6, 182, 212, 0.2)",
+                        color: "var(--accent-cyan)",
+                        fontWeight: 700,
+                      }}
+                    >
+                      GeoJSON
+                    </span>
+                  )}
+                </button>
+              </div>
+
+              {selectedDataset.hasGeospatial && (
+                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <span className="badge badge-cyan" style={{ fontSize: "0.68rem" }}>
+                    SPATIAL DATASET
+                  </span>
+                  <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+                    EPSG:4326 WGS84
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {datasetViewTab === "map" ? (
+              <GeospatialMapViewer dataset={selectedDataset} />
+            ) : (
+              <>
+                {/* Schema Table with Missing Value Counts */}
+                <div style={{ marginBottom: "20px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                    <h4 style={{ fontSize: "0.82rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--text-muted)" }}>
+                      Column Definitions, Inferred Types & Null Statistics
+                    </h4>
                 <span style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
                   Stage 9 Type Pipeline
                 </span>
@@ -713,9 +789,11 @@ export default function DatasetsPage() {
                 </table>
               </div>
             </div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
+    </div>
+  </div>
 
       {/* Interactive DuckDB SQL Sandbox */}
       <section style={{ marginBottom: "36px" }}>

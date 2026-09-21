@@ -55,5 +55,10 @@
 | `GET` | `/api/v1/documents` | Milestone 1 | List indexed documents and metadata. |
 | `POST` | `/api/v1/datasets/upload` | Milestone 1 | Upload CSV/XLSX tabular dataset for DuckDB registration. |
 | `GET` | `/api/v1/datasets` | Milestone 1 | List registered datasets and schema details. |
+| `POST` | `/api/v1/connectors/ingest` | Stage 17 | Import public external dataset via connector with provenance. |
+| `GET` | `/api/v1/geospatial/{dataset_id}/geojson` | Stage 18 | Retrieve RFC 7946 GeoJSON FeatureCollection with spatial bbox filtering. |
+| `GET` | `/api/v1/geospatial/{dataset_id}/metadata` | Stage 18 | Retrieve geographic CRS, extent bbox, and spatial column mappings. |
+| `POST` | `/api/v1/geospatial/validate` | Stage 18 | Validate geographic coordinates or GeoJSON schema conformity. |
 | `POST` | `/api/v1/query` | Milestone 2–3 | Evidence-grounded natural language query orchestrator. |
 | `GET` | `/api/v1/trace/{query_id}` | Milestone 3 | Inspect citation excerpts and DuckDB SQL calculation trace. |
+

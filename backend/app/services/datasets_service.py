@@ -5,6 +5,7 @@ from pathlib import Path
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from app.geospatial.detector import GeospatialDetector
 from app.ingestion.dataset_pipeline import dataset_pipeline
 from app.models.dataset import Dataset
 from app.schemas.datasets import (
@@ -66,6 +67,9 @@ class DatasetsService:
                 retrieval_date=ds.retrieval_date,
                 original_format=ds.original_format,
                 processing_metadata=ds.processing_metadata,
+                has_geospatial=GeospatialDetector.has_geospatial_columns(
+                    [c["name"] for c in (ds.columns_metadata or [])]
+                ),
             )
             for ds in datasets
         ]
@@ -102,6 +106,9 @@ class DatasetsService:
             retrieval_date=ds.retrieval_date,
             original_format=ds.original_format,
             processing_metadata=ds.processing_metadata,
+            has_geospatial=GeospatialDetector.has_geospatial_columns(
+                [c["name"] for c in (ds.columns_metadata or [])]
+            ),
         )
 
     def create_dataset(self, db: Session, payload: DatasetCreate) -> DatasetItem:
