@@ -36,16 +36,20 @@ class AnalyticsService:
         question: str | None = None,
     ) -> str:
         """Resolve and ensure the target table is registered in DuckDB."""
+        from app.core.security import validate_entity_id
+
         # 1. Direct dataset_id lookup
-        if dataset_id and db is not None:
-            ds = db.get(Dataset, dataset_id)
-            if ds:
-                self._ensure_dataset_loaded_in_duckdb(ds)
-                return ds.table_name
+        if dataset_id:
+            valid_id = validate_entity_id(dataset_id)
+            if db is not None:
+                ds = db.get(Dataset, valid_id)
+                if ds:
+                    self._ensure_dataset_loaded_in_duckdb(ds)
+                    return ds.table_name
 
         # 2. Direct table_name specified
         if table_name:
-            clean_name = table_name.strip().lower()
+            clean_name = validate_entity_id(table_name.strip().lower())
             if self.engine.has_table(clean_name):
                 return clean_name
             # If not yet in DuckDB, check if it's in PostgreSQL
@@ -106,6 +110,12 @@ class AnalyticsService:
         → DuckDB
         → structured result
         """
+        # Step 0: Input sanitization
+        from app.core.security import sanitize_prompt_input
+
+        if request.question:
+            request.question = sanitize_prompt_input(request.question)
+
         # Step 1: Resolve target table
         target_table = self.resolve_target_table(
             db=db,

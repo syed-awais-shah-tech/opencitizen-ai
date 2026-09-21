@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
+from app.core.security import sanitize_prompt_input
 from app.db.session import get_db
 from app.schemas.query import QueryRequest, QueryResponse
 from app.services.query_service import query_service
@@ -22,4 +23,5 @@ async def execute_query(
     db: Session = Depends(get_db),
 ) -> QueryResponse:
     """Execute evidence-grounded civic inquiry and persist execution metadata."""
+    payload.question = sanitize_prompt_input(payload.question)
     return query_service.process_query(payload, db=db)

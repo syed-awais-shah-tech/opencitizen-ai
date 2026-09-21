@@ -63,9 +63,11 @@ async def upload_document(
     summary: str = Form(default="", description="Optional executive summary"),
     db: Session = Depends(get_db),
 ) -> UploadDocumentResponse:
-    """Execute PDF ingestion pipeline over uploaded file."""
-    content = await file.read()
-    source_filename = file.filename or "uploaded_document.pdf"
+    """Execute PDF ingestion pipeline over validated, bounded uploaded file."""
+    from app.core.security import sanitize_filename, validate_file_upload
+
+    source_filename = sanitize_filename(file.filename, default_name="uploaded_document.pdf")
+    content = await validate_file_upload(file=file, allowed_extensions={".pdf"})
 
     # Execute ingestion pipeline
     result = pipeline.process_bytes(
@@ -125,7 +127,10 @@ async def get_document(
     db: Session = Depends(get_db),
 ) -> DocumentItem:
     """Retrieve document by ID."""
-    document = documents_service.get_document_by_id(db=db, document_id=document_id)
+    from app.core.security import validate_entity_id
+
+    valid_id = validate_entity_id(document_id)
+    document = documents_service.get_document_by_id(db=db, document_id=valid_id)
     if not document:
-        raise EntityNotFoundError("Document", document_id)
+        raise EntityNotFoundError("Document", valid_id)
     return document

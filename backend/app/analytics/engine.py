@@ -133,14 +133,19 @@ class DuckDBEngine:
             execution_time_ms: latency in milliseconds
             rows_scanned: estimated number of rows scanned
         """
+        from app.analytics.validator import QueryValidator
+
+        # Defense-in-depth: validate incoming SQL against safety boundaries and registered tables
+        validated_sql = QueryValidator.validate_sql(sql, self.get_registered_tables())
+
         start = time.perf_counter()
         cursor = self.conn.cursor()
 
         try:
             if params:
-                cursor.execute(sql, params)
+                cursor.execute(validated_sql, params)
             else:
-                cursor.execute(sql)
+                cursor.execute(validated_sql)
 
             # Extract output column names
             columns = [desc[0] for desc in cursor.description] if cursor.description else []

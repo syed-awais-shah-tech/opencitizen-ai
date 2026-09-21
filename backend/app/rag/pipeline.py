@@ -46,10 +46,10 @@ class RAGPipeline:
         )
 
     def process_question(self, question: str) -> str:
-        """Step 1: Sanitize and preprocess natural language inquiry."""
-        if not question or not question.strip():
-            raise ValueError("User question cannot be empty or whitespace only.")
-        return question.strip()
+        """Step 1: Sanitize and preprocess natural language inquiry with prompt injection protection."""
+        from app.core.security import sanitize_prompt_input
+
+        return sanitize_prompt_input(question)
 
     def run(
         self,

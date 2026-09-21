@@ -29,7 +29,10 @@ class ToolMetadata(BaseModel):
 )
 async def determine_query_route(payload: RouteRequest) -> RoutingDecision:
     """Classify inquiry into one of the four routing categories."""
-    return query_router_service.classify(payload.question)
+    from app.core.security import sanitize_prompt_input
+
+    clean_question = sanitize_prompt_input(payload.question)
+    return query_router_service.classify(clean_question)
 
 
 @router.get(

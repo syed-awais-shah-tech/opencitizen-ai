@@ -73,7 +73,9 @@ async def list_analytical_tables() -> list[TableSchemaInfo]:
 )
 async def get_table_info(table_name: str) -> TableSchemaInfo:
     """Get single table schema."""
-    clean_name = table_name.strip().lower()
+    from app.core.security import validate_entity_id
+
+    clean_name = validate_entity_id(table_name.strip().lower())
     if not analytics_service.engine.has_table(clean_name):
         raise TableNotAllowedError(clean_name, analytics_service.engine.get_registered_tables())
     return analytics_service.engine.get_table_info(clean_name)

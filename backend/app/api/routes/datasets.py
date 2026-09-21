@@ -54,20 +54,31 @@ async def create_dataset(
     description="Upload CSV, XLSX, or JSON files. Detects format, inspects schema, identifies columns, infers data types, validates records, and generates preview.",
 )
 async def upload_dataset(
-    file: UploadFile = File(..., description="Tabular data file (CSV, XLSX, or JSON)"),
+    file: UploadFile = File(..., description="Tabular data file (CSV, XLSX, JSON, or Parquet)"),
     category: str = Form(default="General", description="Civic domain category"),
     table_name: str | None = Form(default=None, description="Optional target table name"),
     db: Session = Depends(get_db),
 ) -> DatasetUploadResponse:
     """Ingest tabular dataset file into metadata repository and generate interactive preview."""
-    content = await file.read()
-    filename = file.filename or "uploaded_dataset.csv"
+    from app.core.security import sanitize_filename, validate_entity_id, validate_file_upload
+
+    filename = sanitize_filename(file.filename, default_name="uploaded_dataset.csv")
+    content = await validate_file_upload(
+        file=file,
+        allowed_extensions={".csv", ".xlsx", ".json", ".parquet", ".pq"},
+        error_code="UNSUPPORTED_DATASET_FORMAT",
+    )
+
+    clean_table_name = None
+    if table_name and table_name.strip():
+        clean_table_name = validate_entity_id(table_name.strip().lower())
+
     dataset_item, preview = datasets_service.ingest_dataset_file(
         db=db,
         content=content,
         filename=filename,
         category=category,
-        table_name=table_name,
+        table_name=clean_table_name,
     )
     return DatasetUploadResponse(dataset=dataset_item, preview=preview)
 
@@ -84,9 +95,12 @@ async def get_dataset(
     db: Session = Depends(get_db),
 ) -> DatasetItem:
     """Retrieve dataset by ID."""
-    dataset = datasets_service.get_dataset_by_id(db=db, dataset_id=dataset_id)
+    from app.core.security import validate_entity_id
+
+    valid_id = validate_entity_id(dataset_id)
+    dataset = datasets_service.get_dataset_by_id(db=db, dataset_id=valid_id)
     if not dataset:
-        raise EntityNotFoundError("Dataset", dataset_id)
+        raise EntityNotFoundError("Dataset", valid_id)
     return dataset
 
 
@@ -102,7 +116,10 @@ async def get_dataset_preview(
     db: Session = Depends(get_db),
 ) -> DatasetPreview:
     """Retrieve schema preview, column data types, missing counts, and sample records."""
-    preview = datasets_service.get_dataset_preview(db=db, dataset_id=dataset_id)
+    from app.core.security import validate_entity_id
+
+    valid_id = validate_entity_id(dataset_id)
+    preview = datasets_service.get_dataset_preview(db=db, dataset_id=valid_id)
     if not preview:
-        raise EntityNotFoundError("Dataset", dataset_id)
+        raise EntityNotFoundError("Dataset", valid_id)
     return preview

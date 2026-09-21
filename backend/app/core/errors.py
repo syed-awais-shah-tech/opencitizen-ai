@@ -107,3 +107,24 @@ def setup_exception_handlers(app: FastAPI) -> None:
                 "details": None,
             },
         )
+
+    @app.exception_handler(Exception)
+    async def unhandled_exception_handler(
+        _request: Request, exc: Exception
+    ) -> JSONResponse:
+        import logging
+        from app.core.security import scrub_secrets
+
+        logger = logging.getLogger(__name__)
+        scrubbed_msg = scrub_secrets(str(exc))
+        logger.error("Unhandled internal server error: %s", scrubbed_msg, exc_info=True)
+
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={
+                "success": False,
+                "error_code": "INTERNAL_SERVER_ERROR",
+                "message": "An internal server error occurred. Please contact the system administrator.",
+                "details": None,
+            },
+        )
