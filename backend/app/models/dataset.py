@@ -30,6 +30,14 @@ class Dataset(Base):
     columns_metadata: Mapped[list[dict[str, Any]]] = mapped_column(
         JSON, default=list, nullable=False
     )
+    # Provenance fields for external public-data sources (Stage 17)
+    source_url: Mapped[str | None] = mapped_column(String(1024), nullable=True)
+    source_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    retrieval_date: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    original_format: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    processing_metadata: Mapped[dict[str, Any] | None] = mapped_column(
+        JSON, default=dict, nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=lambda: datetime.now(timezone.utc), nullable=False
     )

@@ -61,6 +61,11 @@ class DatasetsService:
                     )
                     for c in (ds.columns_metadata or [])
                 ],
+                source_url=ds.source_url,
+                source_name=ds.source_name,
+                retrieval_date=ds.retrieval_date,
+                original_format=ds.original_format,
+                processing_metadata=ds.processing_metadata,
             )
             for ds in datasets
         ]
@@ -92,6 +97,11 @@ class DatasetsService:
                 )
                 for c in (ds.columns_metadata or [])
             ],
+            source_url=ds.source_url,
+            source_name=ds.source_name,
+            retrieval_date=ds.retrieval_date,
+            original_format=ds.original_format,
+            processing_metadata=ds.processing_metadata,
         )
 
     def create_dataset(self, db: Session, payload: DatasetCreate) -> DatasetItem:

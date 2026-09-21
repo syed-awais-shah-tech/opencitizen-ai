@@ -37,6 +37,7 @@ out/
 build/
 dist/
 .turbo/
+*.tsbuildinfo
 
 # ------------------------------------------------------------------------------
 # Python & Virtual Environments

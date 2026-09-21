@@ -56,6 +56,11 @@ export interface DatasetItem {
   columns: DatasetColumn[];
   sampleRows: Record<string, string | number | boolean | null>[];
   missingValueCounts?: Record<string, number>;
+  sourceUrl?: string;
+  sourceName?: string;
+  retrievalDate?: string;
+  originalFormat?: string;
+  processingMetadata?: Record<string, any>;
 }
 
 export interface CitationData {
@@ -424,6 +429,56 @@ export const MOCK_DATASETS: DatasetItem[] = [
       { grant_id: "GRN-2024-002", recipient: "Harbor Clean Waters", grant_amount: 120000, disbursed: true, approval_date: "2024-02-20", program_name: "Environmental Resilience" },
       { grant_id: "GRN-2024-003", recipient: "Downtown Urban Greenery", grant_amount: 35000, disbursed: false, approval_date: "2024-03-05", program_name: null },
       { grant_id: "GRN-2024-004", recipient: "Elder Transit Link", grant_amount: 78000, disbursed: true, approval_date: null, program_name: "Civic Mobility Grant" },
+    ],
+  },
+  {
+    id: "data-5",
+    name: "austin_capital_improvement_projects.csv",
+    category: "Public Works",
+    format: "CSV",
+    rowCount: "2,840",
+    columnsCount: 6,
+    tableName: "austin_capital_projects",
+    status: "ready",
+    date: "Sep 21, 2026",
+    size: "1.4 MB",
+    sourceUrl: "https://data.austintexas.gov/resource/capital_projects.csv",
+    sourceName: "City of Austin Open Data Portal",
+    retrievalDate: "2026-09-21T05:45:00Z",
+    originalFormat: "CSV",
+    processingMetadata: {
+      content_sha256: "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+      http_status_code: 200,
+      content_type: "text/csv; charset=utf-8",
+      fetch_elapsed_ms: 142.6,
+      connector_id: "civic_open_data",
+      transformations: [
+        "parsed_csv",
+        "normalized_column_identifiers",
+        "trimmed_cells_standardized_nulls",
+        "inferred_column_types",
+      ],
+    },
+    columns: [
+      { name: "project_id", type: "VARCHAR", missingCount: 0, nullPercentage: 0.0 },
+      { name: "department", type: "VARCHAR", missingCount: 0, nullPercentage: 0.0 },
+      { name: "project_name", type: "VARCHAR", missingCount: 0, nullPercentage: 0.0 },
+      { name: "allocated_budget", type: "DOUBLE", missingCount: 0, nullPercentage: 0.0 },
+      { name: "expenditure_to_date", type: "DOUBLE", missingCount: 0, nullPercentage: 0.0 },
+      { name: "completion_rate", type: "DOUBLE", missingCount: 0, nullPercentage: 0.0 },
+    ],
+    missingValueCounts: {
+      project_id: 0,
+      department: 0,
+      project_name: 0,
+      allocated_budget: 0,
+      expenditure_to_date: 0,
+      completion_rate: 0,
+    },
+    sampleRows: [
+      { project_id: "CIP-801", department: "Transportation", project_name: "Bikeway & Urban Trail Expansion", allocated_budget: 1200000, expenditure_to_date: 1020000, completion_rate: 0.85 },
+      { project_id: "CIP-802", department: "Parks & Rec", project_name: "Urban Greenway Canopy Renewal", allocated_budget: 450000, expenditure_to_date: 450000, completion_rate: 1.0 },
+      { project_id: "CIP-803", department: "Public Works", project_name: "Barton Springs Drainage Upgrade", allocated_budget: 2300000, expenditure_to_date: 920000, completion_rate: 0.40 },
     ],
   },
 ];
