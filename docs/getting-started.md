@@ -1,118 +1,85 @@
 # OpenCitizen AI - Getting Started & Developer Guide
 
-**Stage:** Stage 1 (Foundation)  
-**Last Updated:** September 2026  
+Welcome to OpenCitizen AI! This guide provides a fast onboarding path for developers and researchers looking to explore, run, and contribute to the platform.
 
 ---
 
-## 1. Prerequisites
+## 1. Quick Navigation
 
-Ensure you have the following installed on your machine:
-* **Node.js** (>= 20 LTS or Node 24) & **npm** (>= 10)
-* **Python** (>= 3.11) & **uv** (>= 0.5)
-* **Git** (>= 2.40)
-* **Docker Desktop** (planned for Milestone 1 / Stage 2 container orchestration)
+Depending on what you want to do, jump directly to the relevant guide:
+
+- **New Developer Setup:** [Local Development Setup Guide](local-setup.md)
+- **Container Infrastructure:** [Docker & Docker Compose Setup Guide](docker-setup.md)
+- **Development & CI Pipeline:** [Development Workflow & CI Guide](development-workflow.md)
+- **Testing & Quality Assurance:** [Comprehensive Testing Guide](testing.md)
+- **Adding External Data Feeds:** [Extending Connectors Guide](extending-connectors.md)
+- **Adding Custom LLMs or Embeddings:** [Extending AI Providers Guide](extending-ai-providers.md)
+- **Customizing Retrieval & Rerankers:** [Extending Retrieval Strategies Guide](extending-retrieval-strategies.md)
+- **System Architecture Deep-Dive:** [System Architecture Document](../ARCHITECTURE.md)
+- **Contributing & Pull Requests:** [Contributing Guidelines](../CONTRIBUTING.md)
 
 ---
 
-## 2. Quick Setup
+## 2. 5-Minute Quickstart (Hermetic Local Execution)
 
-We provide automated setup scripts in `scripts/`:
+OpenCitizen AI is designed to run offline without external API keys or cloud accounts out of the box.
 
-### Windows (PowerShell)
-```powershell
-.\scripts\setup.ps1
-```
-
-### Linux / macOS (Bash)
+### 2.1 Clone & Configure
 ```bash
-./scripts/setup.sh
+git clone https://github.com/syed-awais-shah-tech/opencitizen-ai.git
+cd opencitizen-ai
+cp .env.example .env
 ```
 
----
-
-## 3. Manual Component Setup
-
-### Backend (FastAPI + Python)
-
-1. Navigate to the backend folder:
-   ```bash
-   cd backend
-   ```
-
-2. Create a virtual environment using `uv`:
-   ```bash
-   uv venv .venv
-   ```
-
-3. Activate the virtual environment:
-   * **Windows (PowerShell):**
-     ```powershell
-     .\.venv\Scripts\activate
-     ```
-   * **Linux / macOS:**
-     ```bash
-     source .venv/bin/activate
-     ```
-
-4. Install dependencies in editable mode:
-   ```bash
-   uv pip install -e ".[dev]"
-   ```
-
-5. Start the FastAPI development server:
-   ```bash
-   uvicorn app.main:app --reload --port 8000
-   ```
-
-6. Verify the health check endpoint:
-   * `http://localhost:8000/health`
-   * `http://localhost:8000/docs` (Swagger UI)
-
-### Frontend (Next.js + TypeScript)
-
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Start the Next.js development server:
-   ```bash
-   npm run dev
-   ```
-
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
-
----
-
-## 4. Running Automated Tests
-
-### Backend Tests
+### 2.2 Run Backend (FastAPI)
 ```bash
-# From workspace root
-backend\.venv\Scripts\pytest backend/tests
+# Set up Python virtual environment
+python -m venv backend/.venv
+source backend/.venv/bin/activate   # Windows: .\backend\.venv\Scripts\Activate.ps1
 
-# Or with virtualenv activated
-pytest backend/tests tests/backend
+# Install package with dev dependencies
+pip install -e "./backend[dev]"
+
+# Start API server
+uvicorn backend.app.main:app --reload --port 8000
 ```
+- API Base URL: `http://localhost:8000`
+- Interactive OpenAPI Docs: `http://localhost:8000/docs`
+- Health Check: `http://localhost:8000/health`
 
-### Frontend Validation & Build
+### 2.3 Run Frontend (Next.js)
+In a separate terminal:
 ```bash
 cd frontend
-npm run build
+npm ci
+npm run dev
 ```
+- Web Application: [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## 5. Development Scripts Directory
+## 3. Running Verification Locally
 
-| Script | Purpose |
-| :--- | :--- |
-| `scripts/setup.ps1` / `scripts/setup.sh` | One-shot setup of virtualenv, backend dependencies, and npm packages. |
-| `scripts/test.ps1` / `scripts/test.sh` | Runs backend pytest suite and frontend validation. |
-| `scripts/dev.ps1` / `scripts/dev.sh` | Starts development servers for frontend and backend. |
+Before submitting code, always run the full test suite:
+
+```bash
+# Backend linting
+ruff check backend
+
+# Backend unit & integration tests (265+ tests)
+pytest backend/tests tests -v
+
+# Frontend typecheck & build
+npm run typecheck --prefix frontend
+npm run build --prefix frontend
+```
+
+All 265+ tests run hermetically in-memory and execute in under 30 seconds.
+
+---
+
+## 4. Need Help?
+
+- Check the [Project Roadmap](../ROADMAP.md) for milestone progress and upcoming capabilities.
+- Open an issue using one of our [GitHub Issue Templates](../.github/ISSUE_TEMPLATE/).
+- Report security issues privately following our [Security Policy](../SECURITY.md).

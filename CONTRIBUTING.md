@@ -1,99 +1,122 @@
 # Contributing to OpenCitizen AI
 
-Thank you for your interest in contributing to OpenCitizen AI! We are building an evidence-grounded AI platform for analyzing public documents and structured datasets with verifiable calculations and source attribution.
+Thank you for your interest in contributing to OpenCitizen AI! We are building an evidence-grounded, verifiable AI platform for public documents and civic tabular datasets.
 
-Please review this guide before submitting contributions.
+Please review this guide before submitting issues or pull requests.
 
 ---
 
 ## Code of Conduct
 
-All contributors and participants are expected to adhere to our [Code of Conduct](CODE_OF_CONDUCT.md) in all project spaces.
+All contributors, maintainers, and community members are expected to uphold our [Code of Conduct](CODE_OF_CONDUCT.md) in all project spaces.
 
 ---
 
-## Core Development Philosophy
+## Core Engineering Invariants
 
-1. **Incremental & Atomic:** We build iteratively in small, reviewable steps. We avoid massive, monolithic pull requests.
-2. **Quality & Verification:** Every completed atomic module must include tests (unit, integration, or linting) before being merged.
-3. **Evidence & Truthfulness:** We do not claim features are implemented when they are still planned. Documentation must reflect actual project state.
-4. **Zero Secrets:** Never commit secrets, credentials, API keys, or `.env` files.
+1. **Evidence Grounding Before Generation:** Answers must be backed strictly by retrieved document passages or computed dataset records. Factual claims without evidence are prohibited.
+2. **Deterministic Calculations:** Mathematical claims are computed directly in DuckDB—never guessed by the LLM.
+3. **Inspectable Provenance:** Every response retains document IDs, page numbers, text excerpts, or the exact SQL query run.
+4. **Incremental & Atomic Work:** Features, bug fixes, and documentation updates are developed in small, reviewable increments.
+5. **Full Test Verification:** Every module must include unit and integration tests with 100% passing status prior to merge.
+6. **Zero Secrets:** Never commit `.env` files, API keys, passwords, tokens, or credentials.
+
+---
+
+## How Can I Contribute?
+
+### 1. Reporting Bugs
+- Check existing issues to see if the bug has already been reported.
+- If not, open an issue using the [Bug Report Template](.github/ISSUE_TEMPLATE/bug_report.md).
+- Include minimal reproduction steps, expected vs. actual behavior, and error tracebacks (scrubbed of any sensitive data).
+
+### 2. Suggesting Features & Civic Data Sources
+- Check the [Project Roadmap](ROADMAP.md) to see if the feature is already planned.
+- Open an issue using the [Feature Request Template](.github/ISSUE_TEMPLATE/feature_request.md).
+- Focus on civic research use cases, grounding requirements, and clean architectural abstractions.
+
+### 3. Finding Beginner-Friendly Issues
+- Look for issues labeled [`good first issue`](.github/ISSUE_TEMPLATE/good_first_issue.md) or [`help wanted`](.github/ISSUE_TEMPLATE/help_wanted.md).
+- These tasks are self-contained and ideal for familiarizing yourself with the codebase.
+
+### 4. Extending Subsystems
+We provide comprehensive architectural guides for extending key subsystems:
+- **Connectors**: See [Extending Connectors Guide](docs/extending-connectors.md) to add public open data portals (CKAN, Socrata, Eurostat, Census).
+- **AI Providers**: See [Extending AI Providers Guide](docs/extending-ai-providers.md) to integrate local LLMs (Ollama, vLLM) or alternative APIs (Claude, OpenAI).
+- **Retrieval Strategies**: See [Extending Retrieval Strategies Guide](docs/extending-retrieval-strategies.md) for custom vector stores, BM25 tuning, or rerankers.
+- **Geospatial**: See [Geospatial Architecture Guide](docs/geospatial-architecture.md) for GeoJSON and mapping extensions.
+
+---
+
+## Development Environment Setup
+
+Please follow our detailed setup guides:
+- **Local Development**: [Local Setup Guide](docs/local-setup.md)
+- **Containerized Services**: [Docker Setup Guide](docs/docker-setup.md)
+- **CI/CD & Workflows**: [Development Workflow Guide](docs/development-workflow.md)
+- **Testing Guide**: [Comprehensive Testing Guide](docs/testing.md)
 
 ---
 
 ## Conventional Commits
 
-We strictly follow the [Conventional Commits](https://www.conventionalcommits.org/) specification (v1.0.0).
+We strictly follow the [Conventional Commits v1.0.0](https://www.conventionalcommits.org/) specification. Every commit message must follow this format:
 
-Commit messages must take the form:
 ```
-<type>(<scope>): <short summary>
+<type>(<scope>): <imperative summary>
 
-[optional body]
+[optional body describing rationale, design decisions, and tradeoffs]
 
-[optional footer(s)]
+[optional footer(s) such as Fixes #123]
 ```
 
 ### Allowed Types:
-* `feat`: A new user-facing or platform feature
-* `fix`: A bug fix
-* `docs`: Documentation updates or additions
-* `style`: Formatting, missing semicolons, etc. (no code change)
-* `refactor`: Refactoring production code without changing behavior
-* `test`: Adding or correcting tests
-* `chore`: Maintenance tasks, dependency updates, repo scaffolding
+- `feat`: A new user-facing feature or API capability
+- `fix`: A bug fix
+- `docs`: Documentation updates or additions
+- `refactor`: Code refactoring without behavioral changes
+- `test`: Adding or correcting tests
+- `ci`: CI/CD workflow and build changes
+- `chore`: Repository maintenance, dependencies, or scaffolding
 
-### Example:
-```bash
-feat(backend): implement duckdb query execution service
-test(api): add tests for document upload endpoint
-chore(repo): initialize project structure
-```
+### Scope Examples:
+`feat(connectors)`, `feat(geospatial)`, `fix(ingestion)`, `test(rag)`, `docs(api)`, `ci(workflow)`.
 
 ---
 
-## Getting Started
+## Pull Request Process
 
-### Prerequisites
-* **Git** (>= 2.40)
-* **GitHub CLI** (`gh`)
-* **Node.js** (>= 20 LTS) & **npm**
-* **Python** (>= 3.11) & **uv** (recommended for fast package management)
-* **Docker** & **Docker Compose** (for multi-service orchestration)
-
-### Development Workflow
-
-1. **Fork or Branch:**
-   Create a descriptive feature branch from `main`:
+1. **Create a Topic Branch:**
    ```bash
-   git checkout -b feat/evidence-grounding
+   git checkout -b feat/socrata-connector
    ```
 
-2. **Make Changes Incrementally:**
-   Keep changes focused on a single atomic responsibility.
+2. **Develop Incrementally:**
+   Keep changes focused on a single responsibility. Avoid combining unrelated changes into a single PR.
 
-3. **Verify & Test Locally:**
-   Run relevant tests and linters for the modified component:
-   * Frontend: `npm run typecheck --prefix frontend` && `npm run build --prefix frontend`
-   * Backend: `ruff check backend` && `pytest backend/tests`
-   * Integration: `pytest tests`
+3. **Verify Locally:**
+   Run the full test suite and linters:
+   ```bash
+   # Backend linting
+   ruff check backend
 
-4. **Review Git Diff:**
-   Ensure no stray files, debug logs, or credentials are staged:
+   # Backend unit and integration tests (265+ tests)
+   pytest backend/tests tests -v
+
+   # Frontend type-checking and build
+   npm run typecheck --prefix frontend
+   npm run build --prefix frontend
+   ```
+
+4. **Inspect Diff for Secrets:**
    ```bash
    git status
    git diff
    ```
+   Ensure no `.env` files, credentials, or stray artifacts are staged.
 
-5. **Commit & Push:**
-   Stage only relevant files and write a clear conventional commit message:
-   ```bash
-   git add <specific-files>
-   git commit -m "feat(module): add atomic capability"
-   git push origin feat/evidence-grounding
-   ```
-
-6. **Submit a Pull Request & Pass CI:**
-   Open a PR against `main`. All pull requests trigger the automated GitHub Actions CI workflow (`.github/workflows/ci.yml`), which validates dependencies, linting, frontend checks, backend unit tests, and integration tests. All checks must pass before merging.
-
-For comprehensive details on the continuous integration pipeline, see [Development Workflow & CI Guide](docs/development-workflow.md).
+5. **Submit Pull Request:**
+   - Push your branch to your fork or origin.
+   - Open a pull request against `main`.
+   - Complete the [Pull Request Template](.github/pull_request_template.md).
+   - Ensure all automated GitHub Actions CI checks turn green.

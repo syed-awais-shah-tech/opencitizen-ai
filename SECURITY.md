@@ -31,7 +31,7 @@ OpenCitizen AI is architected as an evidence-grounded civic intelligence engine:
 
 ## 3. Implemented Protections
 
-OpenCitizen AI enforces automated security protections across nine primary vulnerability vectors:
+OpenCitizen AI enforces automated security protections across eleven primary vulnerability vectors:
 
 ### 3.1 Uploaded File Validation
 - **Extension Whitelisting**: Documents allow only `.pdf`. Tabular datasets allow only `.csv`, `.xlsx`, `.json`, `.parquet`, `.pq`. All other extensions are rejected with HTTP 400.
@@ -84,7 +84,7 @@ OpenCitizen AI enforces automated security protections across nine primary vulne
 
 ### 3.8 Error-Message & Stack Trace Leakage Prevention
 - **Centralized Exception Interception**: The global `unhandled_exception_handler` in `app/core/errors.py` intercepts uncaught server exceptions.
-- **Sanitized Client Responses**: Uncaught exceptions return a generic HTTP 500 payload:
+- **Sanitized Client Responses**: Uncaught exceptions return a generic HTTP 500 payload without leaking internal filesystem paths, database connection strings, or stack traces:
   ```json
   {
     "success": false,
@@ -93,11 +93,20 @@ OpenCitizen AI enforces automated security protections across nine primary vulne
     "details": null
   }
   ```
-  Internal file paths, database connection strings, raw stack traces, and SQL snippets are never returned to API consumers.
 
 ### 3.9 Authorization & Identifier Boundaries
 - **Strict Identifier Validation**: All path parameters (`document_id`, `dataset_id`, `table_name`) are checked before querying databases or file systems.
 - **Storage Segregation**: Ingested files and previews are isolated to dedicated directory structures within `storage/`, preventing arbitrary file writes.
+
+### 3.10 Container & Infrastructure Isolation
+- **Non-Root Containers**: Docker services utilize lightweight Alpine Linux images (`postgres:16-alpine`, `qdrant/qdrant:v1.12.0`).
+- **Internal Network Boundaries**: In production, container ports are not directly exposed to the public internet; traffic is mediated through an authenticated edge proxy.
+- **Persistent Volume Isolation**: Storage directories are mapped to named Docker volumes rather than unrestricted host filesystem mounts.
+
+### 3.11 Automated Security Auditing in CI
+- **Dependency Vulnerability Scanning**: Contributors are encouraged to run `pip-audit` and `npm audit` periodically.
+- **Zero-Secret CI Logs**: GitHub Actions workflows run with mock tokens and hermetic in-memory stores, ensuring no secrets are exposed in logs.
+- **Pull Request Gating**: CI fails if any security, unit, or integration test fails.
 
 ---
 
