@@ -72,10 +72,11 @@ chore(repo): initialize project structure
 2. **Make Changes Incrementally:**
    Keep changes focused on a single atomic responsibility.
 
-3. **Verify & Test:**
+3. **Verify & Test Locally:**
    Run relevant tests and linters for the modified component:
-   * Frontend: `npm test` / `npm run lint`
-   * Backend: `pytest` / `ruff check`
+   * Frontend: `npm run typecheck --prefix frontend` && `npm run build --prefix frontend`
+   * Backend: `ruff check backend` && `pytest backend/tests`
+   * Integration: `pytest tests`
 
 4. **Review Git Diff:**
    Ensure no stray files, debug logs, or credentials are staged:
@@ -92,5 +93,7 @@ chore(repo): initialize project structure
    git push origin feat/evidence-grounding
    ```
 
-6. **Submit a Pull Request:**
-   Open a PR against `main` detailing the changes made, tests executed, and design rationale.
+6. **Submit a Pull Request & Pass CI:**
+   Open a PR against `main`. All pull requests trigger the automated GitHub Actions CI workflow (`.github/workflows/ci.yml`), which validates dependencies, linting, frontend checks, backend unit tests, and integration tests. All checks must pass before merging.
+
+For comprehensive details on the continuous integration pipeline, see [Development Workflow & CI Guide](docs/development-workflow.md).

@@ -14,10 +14,14 @@ if str(backend_path) not in sys.path:
 from app.main import app  # noqa: E402
 
 
+from collections.abc import Generator
+
+
 @pytest.fixture
-def client() -> TestClient:
-    """Create TestClient fixture."""
-    return TestClient(app)
+def client() -> Generator[TestClient, None, None]:
+    """Create TestClient fixture with proper lifecycle management."""
+    with TestClient(app) as test_client:
+        yield test_client
 
 
 def test_integration_health_endpoint(client: TestClient) -> None:

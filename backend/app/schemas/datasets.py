@@ -115,6 +115,26 @@ class IngestExternalDatasetRequest(BaseModel):
     )
 
 
+class DatasetPreview(BaseModel):
+    """Dataset preview payload containing schema, inferred types, missing counts, and sample rows."""
+
+    dataset_id: str = Field(..., description="Unique dataset identifier")
+    name: str = Field(..., description="Dataset name")
+    format: str = Field(..., description="Detected tabular file format (CSV, XLSX, JSON)")
+    row_count: int = Field(..., ge=0, description="Total number of rows")
+    columns_count: int = Field(..., ge=0, description="Total number of columns")
+    columns: list[str] = Field(..., description="List of column names")
+    inferred_types: dict[str, str] = Field(
+        ..., description="Mapping of column names to inferred SQL/DuckDB types"
+    )
+    missing_value_counts: dict[str, int] = Field(
+        ..., description="Mapping of column names to count of null/missing values"
+    )
+    sample_rows: list[dict[str, Any]] = Field(
+        default_factory=list, description="Sample rows (top records from dataset)"
+    )
+
+
 class IngestExternalDatasetResponse(BaseModel):
     """Response payload returned when an external public dataset is ingested."""
 
@@ -142,26 +162,6 @@ class ConnectorListResponse(BaseModel):
 
     items: list[ConnectorInfo] = Field(..., description="Available connectors")
     total: int = Field(..., description="Total count of available connectors")
-
-
-class DatasetPreview(BaseModel):
-    """Dataset preview payload containing schema, inferred types, missing counts, and sample rows."""
-
-    dataset_id: str = Field(..., description="Unique dataset identifier")
-    name: str = Field(..., description="Dataset name")
-    format: str = Field(..., description="Detected tabular file format (CSV, XLSX, JSON)")
-    row_count: int = Field(..., ge=0, description="Total number of rows")
-    columns_count: int = Field(..., ge=0, description="Total number of columns")
-    columns: list[str] = Field(..., description="List of column names")
-    inferred_types: dict[str, str] = Field(
-        ..., description="Mapping of column names to inferred SQL/DuckDB types"
-    )
-    missing_value_counts: dict[str, int] = Field(
-        ..., description="Mapping of column names to count of null/missing values"
-    )
-    sample_rows: list[dict[str, Any]] = Field(
-        default_factory=list, description="Sample rows (top records from dataset)"
-    )
 
 
 class DatasetUploadResponse(BaseModel):

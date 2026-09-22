@@ -166,7 +166,7 @@ class DataAnalysisInput(BaseModel):
 
 class DataAnalysisTool(BaseTool):
     """Explicit tool for verified analytical calculations over structured datasets in DuckDB.
-    
+
     CRITICAL SECURITY INVARIANT:
     Raw arbitrary SQL is never accepted from the caller or model.
     Execution strictly flows through:
