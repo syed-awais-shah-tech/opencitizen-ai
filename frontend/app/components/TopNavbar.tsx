@@ -8,16 +8,16 @@ interface TopNavbarProps {
 }
 
 const PAGE_TITLES: Record<string, { title: string; category: string }> = {
-  "/": { title: "Executive Dashboard", category: "Civic Intelligence" },
-  "/documents": { title: "Document Repository", category: "Ingestion & Chunks" },
-  "/datasets": { title: "Tabular Datasets", category: "DuckDB Engine" },
-  "/query": { title: "Evidence-Grounded Query", category: "Audited Intelligence" },
-  "/evidence": { title: "Sources & Provenance", category: "Zero-Hallucination Audit" },
+  "/": { title: "Welcome", category: "Home" },
+  "/documents": { title: "My Documents", category: "Documents" },
+  "/datasets": { title: "Data & Spreadsheets", category: "Data" },
+  "/query": { title: "Ask a Question", category: "Questions" },
+  "/evidence": { title: "How We Found It", category: "Sources" },
 };
 
 export default function TopNavbar({ onToggleSidebar }: TopNavbarProps) {
   const pathname = usePathname();
-  const pageInfo = PAGE_TITLES[pathname] || { title: "OpenCitizen AI", category: "Platform" };
+  const pageInfo = PAGE_TITLES[pathname] || { title: "OpenCitizen AI", category: "Home" };
 
   return (
     <header className="app-topbar">
@@ -53,30 +53,8 @@ export default function TopNavbar({ onToggleSidebar }: TopNavbarProps) {
         </div>
       </div>
 
-      {/* Right: Status and Quick Actions */}
+      {/* Right: GitHub link */}
       <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-        {/* Mock Mode / Stage 2 Indicator */}
-        <span className="badge badge-cyan" style={{ fontSize: "0.7rem" }}>
-          <span className="badge-dot" /> Stage 2: UI Shell
-        </span>
-
-        {/* Backend Ready Pill */}
-        <div style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "8px",
-          padding: "6px 12px",
-          background: "rgba(16, 185, 129, 0.08)",
-          border: "1px solid rgba(16, 185, 129, 0.25)",
-          borderRadius: "var(--radius-full)",
-          fontSize: "0.75rem",
-          color: "#34d399",
-        }}>
-          <span className="badge-dot" style={{ backgroundColor: "#10b981", boxShadow: "0 0 8px #10b981" }} />
-          <span className="hide-mobile">FastAPI Core: Ready (:8000)</span>
-        </div>
-
-        {/* GitHub link */}
         <a
           href="https://github.com/syed-awais-shah-tech/opencitizen-ai"
           target="_blank"

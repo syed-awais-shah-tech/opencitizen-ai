@@ -110,7 +110,7 @@ export default function DocumentCard({ doc, onClick }: DocumentCardProps) {
           </div>
           <span>•</span>
           <div>
-            <span style={{ color: "var(--accent-cyan)", fontWeight: 600 }}>{doc.chunkCount}</span> indexed chunks
+            <span style={{ color: "var(--accent-cyan)", fontWeight: 600 }}>{doc.chunkCount}</span> sections found
           </div>
         </div>
 

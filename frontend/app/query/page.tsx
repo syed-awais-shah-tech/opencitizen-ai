@@ -222,9 +222,9 @@ export default function QueryPage() {
   return (
     <div>
       <PageHeader
-        title="Civic Inquiry & Trust Layer"
-        description="Every AI answer exposes verifiable provenance: source documents, page numbers, verbatim evidence snippets, measured cosine similarity, model information, and civic boundaries."
-        badge="Stage 8: Trust Layer"
+        title="Ask a Question"
+        description="Type your question in plain English. We'll search your documents and data to find a verified answer with source citations."
+        badge="AI-Powered"
         badgeColor="cyan"
       />
 

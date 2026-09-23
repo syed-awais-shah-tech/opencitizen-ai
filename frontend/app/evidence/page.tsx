@@ -36,13 +36,12 @@ export default function EvidencePage() {
   return (
     <div>
       <PageHeader
-        title="Sources & Evidence Provenance Explorer"
-        description="Inspect the exact mathematical derivations and verbatim text citations behind every OpenCitizen answer. Every query preserves its cryptographic audit trail to eliminate hallucinations."
-        badge="100% Auditable Provenance"
+        title="How We Found Your Answers"
+        description="See the exact documents, pages, and calculations used to answer your questions. Every answer is backed by verifiable sources."
+        badge="Verified Sources"
         badgeColor="cyan"
       />
-
-      {/* Trust & Provenance Summary Metrics */}
+      {/* Source Summary */}
       <section style={{
         display: "grid",
         gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
@@ -51,49 +50,49 @@ export default function EvidencePage() {
       }}>
         <div className="glass-card" style={{ padding: "18px 20px" }}>
           <div style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: "6px" }}>
-            Total Verified Citations
+            Source Citations Found
           </div>
           <div style={{ fontSize: "1.8rem", fontWeight: 800, color: "var(--accent-cyan)" }}>
-            4 Audited
+            4 Sources
           </div>
           <div style={{ fontSize: "0.75rem", color: "var(--accent-emerald)", marginTop: "4px" }}>
-            100% Page Boundary Validated
+            All linked to specific pages
           </div>
         </div>
 
         <div className="glass-card" style={{ padding: "18px 20px" }}>
           <div style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: "6px" }}>
-            SQL Calculations Executed
+            Calculations Verified
           </div>
           <div style={{ fontSize: "1.8rem", fontWeight: 800, color: "var(--accent-emerald)" }}>
             3 Verified
           </div>
           <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "4px" }}>
-            DuckDB Columnar Proofs
+            Each shows the math used
           </div>
         </div>
 
         <div className="glass-card" style={{ padding: "18px 20px" }}>
           <div style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: "6px" }}>
-            Grounding Status
+            Answer Accuracy
           </div>
           <div style={{ fontSize: "1.8rem", fontWeight: 800, color: "var(--accent-emerald)" }}>
             Verified
           </div>
           <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "4px" }}>
-            Ungrounded claims rejected
+            Unsupported claims are rejected
           </div>
         </div>
 
         <div className="glass-card" style={{ padding: "18px 20px" }}>
           <div style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: "6px" }}>
-            Vector Matching Algorithm
+            Relevance Match
           </div>
           <div style={{ fontSize: "1.4rem", fontWeight: 700, color: "var(--accent-purple)", marginTop: "4px" }}>
-            Cosine &gt; 0.85
+            High Confidence
           </div>
           <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "6px" }}>
-            Qdrant HNSW Index
+            Only the most relevant sources used
           </div>
         </div>
       </section>

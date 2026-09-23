@@ -12,21 +12,17 @@ interface SidebarProps {
 const NAV_ITEMS = [
   {
     href: "/",
-    label: "Dashboard",
-    badge: undefined,
+    label: "Home",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="3" width="7" height="7" rx="1"/>
-        <rect x="14" y="3" width="7" height="7" rx="1"/>
-        <rect x="14" y="14" width="7" height="7" rx="1"/>
-        <rect x="3" y="14" width="7" height="7" rx="1"/>
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
       </svg>
     ),
   },
   {
     href: "/documents",
-    label: "Documents",
-    badge: "5",
+    label: "My Documents",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -39,8 +35,7 @@ const NAV_ITEMS = [
   },
   {
     href: "/datasets",
-    label: "Datasets",
-    badge: "3",
+    label: "Data & Spreadsheets",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
@@ -53,8 +48,7 @@ const NAV_ITEMS = [
   },
   {
     href: "/query",
-    label: "AI Query",
-    badge: "Audited",
+    label: "Ask a Question",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
@@ -63,12 +57,11 @@ const NAV_ITEMS = [
   },
   {
     href: "/evidence",
-    label: "Sources & Evidence",
-    badge: "Zero-Hallucination",
+    label: "How We Found It",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-        <circle cx="12" cy="11" r="3"/>
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
     ),
   },
@@ -122,7 +115,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 OpenCitizen <span style={{ color: "var(--accent-cyan)" }}>AI</span>
               </div>
               <div style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>
-                Civic Intelligence
+                Your City, Your Answers
               </div>
             </div>
           </Link>
@@ -157,7 +150,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             color: "var(--text-muted)",
             padding: "0 10px 8px",
           }}>
-            Platform Navigation
+            Navigation
           </div>
 
           <nav>
@@ -174,21 +167,13 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                     {item.icon}
                   </span>
                   <span style={{ flex: 1 }}>{item.label}</span>
-                  {item.badge && (
-                    <span
-                      className={`badge ${isActive ? "badge-cyan" : "badge-purple"}`}
-                      style={{ fontSize: "0.65rem", padding: "2px 6px" }}
-                    >
-                      {item.badge}
-                    </span>
-                  )}
                 </Link>
               );
             })}
           </nav>
         </div>
 
-        {/* Engine Architecture & Status Card */}
+        {/* Help Card */}
         <div style={{
           padding: "16px",
           margin: "12px",
@@ -196,28 +181,18 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           borderRadius: "var(--radius-md)",
           border: "1px solid var(--border-subtle)",
         }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
             <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--text-secondary)" }}>
-              Engine Status
-            </span>
-            <span className="badge badge-emerald" style={{ fontSize: "0.62rem", padding: "2px 6px" }}>
-              <span className="badge-dot" /> Live
+              Need Help?
             </span>
           </div>
-
-          <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "flex", flexDirection: "column", gap: "6px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span>Backend API</span>
-              <span style={{ color: "var(--accent-emerald)", fontFamily: "var(--font-mono)" }}>FastAPI :8000</span>
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span>Analytics</span>
-              <span style={{ color: "var(--accent-cyan)", fontFamily: "var(--font-mono)" }}>DuckDB In-Proc</span>
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span>Vector Store</span>
-              <span style={{ color: "var(--accent-purple)", fontFamily: "var(--font-mono)" }}>Qdrant Ready</span>
-            </div>
+          <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", lineHeight: 1.5 }}>
+            Upload a document or spreadsheet, then ask any question about it. We&apos;ll show you exactly where we found the answer.
           </div>
         </div>
       </aside>

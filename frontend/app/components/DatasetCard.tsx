@@ -47,8 +47,8 @@ export default function DatasetCard({ dataset, onClick }: DatasetCardProps) {
             <div style={{ fontSize: "0.94rem", fontWeight: 600, color: "var(--text-primary)" }}>
               {dataset.name}
             </div>
-            <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "2px", fontFamily: "var(--font-mono)" }}>
-              table: <span style={{ color: "var(--accent-cyan)" }}>{dataset.tableName}</span> • {dataset.size}
+            <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "2px" }}>
+              {dataset.size}
             </div>
           </div>
         </div>
@@ -101,7 +101,7 @@ export default function DatasetCard({ dataset, onClick }: DatasetCardProps) {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "4px", color: "var(--accent-cyan)", fontSize: "0.72rem" }}>
-          <span>DuckDB In-Process Engine</span>
+          <span>Ready for questions</span>
         </div>
       </div>
     </div>

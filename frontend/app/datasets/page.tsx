@@ -336,9 +336,9 @@ export default function DatasetsPage() {
   return (
     <div>
       <PageHeader
-        title="Tabular Datasets & DuckDB Engine"
-        description="Ingest and audit structured municipal ledgers (CSV, XLSX, JSON) with automatic schema inference, null detection, external public connectors, and columnar DuckDB execution."
-        badge="DuckDB Columnar Engine"
+        title="Data & Spreadsheets"
+        description="Upload CSV or Excel files to analyze. Ask questions about the numbers and see the exact calculations behind every answer."
+        badge="Data"
         badgeColor="emerald"
         actions={
           <div style={{ display: "flex", gap: "10px" }}>

@@ -283,9 +283,9 @@ export default function DocumentsPage() {
   return (
     <div>
       <PageHeader
-        title="Audited Document Repository"
-        description="Municipal PDFs processed through asynchronous background worker jobs. Ingestion coordinates text extraction, chunking with page-level integrity, dense embedding generation, and Qdrant vector storage without blocking HTTP requests."
-        badge="Stage 16: Background Ingestion"
+        title="My Documents"
+        description="Upload and manage your PDF documents. Once processed, you can ask questions about their contents and get verified answers with source citations."
+        badge="Documents"
         badgeColor="cyan"
         actions={
           <button
@@ -301,7 +301,7 @@ export default function DocumentsPage() {
               <polyline points="17 8 12 3 7 8"/>
               <line x1="12" y1="3" x2="12" y2="15"/>
             </svg>
-            Upload Document (Async Job)
+            Upload Document
           </button>
         }
       />

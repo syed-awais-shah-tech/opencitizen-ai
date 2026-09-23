@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "OpenCitizen AI - Evidence-Grounded Civic Intelligence",
-  description: "Question municipal documents, analyze civic datasets, and inspect the exact source citations and DuckDB calculations behind every answer.",
+  title: "OpenCitizen AI — Get Answers from Your City's Documents",
+  description: "Upload city documents and data, ask questions in plain English, and get verified answers with source citations.",
 };
 
 import AppLayout from "./components/AppLayout";
