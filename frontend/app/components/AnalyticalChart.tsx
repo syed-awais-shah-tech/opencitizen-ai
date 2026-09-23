@@ -279,7 +279,7 @@ export default function AnalyticalChart({
               {safeChartType} chart
             </span>
             <span className="badge badge-emerald" style={{ fontSize: "0.68rem" }}>
-              Verified DuckDB Origin
+              Based on your dataset
             </span>
           </div>
           <h4 style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
@@ -359,7 +359,7 @@ export default function AnalyticalChart({
             <line x1="12" y1="8" x2="12.01" y2="8"/>
           </svg>
           <span>
-            <strong style={{ color: "var(--accent-cyan)" }}>Selection Provenance:</strong> {selectionReason}
+            <strong style={{ color: "var(--accent-cyan)" }}>How this chart was created:</strong> {selectionReason}
           </span>
         </div>
       )}

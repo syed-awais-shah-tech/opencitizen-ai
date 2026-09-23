@@ -16,25 +16,31 @@ import {
 
 export default function QueryPage() {
   const [sessions] = useState<QuerySession[]>(MOCK_QUERY_SESSIONS);
-  const [activeSession, setActiveSession] = useState<QuerySession>(MOCK_QUERY_SESSIONS[0]);
+  const [activeSession, setActiveSession] = useState<QuerySession>(
+    MOCK_QUERY_SESSIONS[0],
+  );
   const [queryInput, setQueryInput] = useState(MOCK_QUERY_SESSIONS[0].question);
   const [isSearching, setIsSearching] = useState(false);
-  const [activeTab, setActiveTab] = useState<"answer" | "analysis" | "evidence" | "sources" | "limitations" | "model">("answer");
+  const [showTechnicalDetails, setShowTechnicalDetails] = useState(false);
+  const [activeTab, setActiveTab] = useState<
+    "answer" | "analysis" | "evidence" | "sources" | "limitations" | "model"
+  >("answer");
 
   // Drawer state
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [activeSnippet, setActiveSnippet] = useState<EvidenceSnippetData | undefined>(
-    activeSession.trust?.evidenceSnippets[0]
-  );
-  const [activeSourceDoc, setActiveSourceDoc] = useState<SourceDocumentData | undefined>(
-    activeSession.trust?.sourceDocuments[0]
-  );
+  const [activeSnippet, setActiveSnippet] = useState<
+    EvidenceSnippetData | undefined
+  >(activeSession.trust?.evidenceSnippets[0]);
+  const [activeSourceDoc, setActiveSourceDoc] = useState<
+    SourceDocumentData | undefined
+  >(activeSession.trust?.sourceDocuments[0]);
 
   const trust: TrustReportData = activeSession.trust || {
     answer: activeSession.answer,
     sourceDocuments: [
       {
-        documentTitle: activeSession.citations[0]?.documentTitle || "Municipal Document",
+        documentTitle:
+          activeSession.citations[0]?.documentTitle || "Municipal Document",
         pageNumbers: [activeSession.citations[0]?.pageNumber || 1],
         chunkCount: activeSession.citations.length,
         department: activeSession.citations[0]?.department,
@@ -73,13 +79,16 @@ export default function QueryPage() {
       scoreMetric: "cosine_similarity",
       verifiabilityRating: "high",
       explanation: `Answer is backed by ${activeSession.citations.length} verified excerpt(s) with measured vector cosine similarity.`,
-      evaluationBasis: "Empirical vector cosine similarity and source evidence coverage without statistical inflation",
+      evaluationBasis:
+        "Empirical vector cosine similarity and source evidence coverage without statistical inflation",
     },
   };
 
   const handleSelectPreset = (questionText: string) => {
     setQueryInput(questionText);
-    const found = sessions.find((s) => s.question.toLowerCase() === questionText.toLowerCase());
+    const found = sessions.find(
+      (s) => s.question.toLowerCase() === questionText.toLowerCase(),
+    );
     if (found) {
       setActiveSession(found);
       if (found.trust?.evidenceSnippets.length) {
@@ -134,41 +143,57 @@ export default function QueryPage() {
           trust: data.trust
             ? {
                 answer: data.trust.answer,
-                sourceDocuments: (data.trust.source_documents || []).map((d: any) => ({
-                  documentTitle: d.document_title,
-                  pageNumbers: d.page_numbers,
-                  chunkCount: d.chunk_count,
-                  department: d.department,
-                })),
+                sourceDocuments: (data.trust.source_documents || []).map(
+                  (d: any) => ({
+                    documentTitle: d.document_title,
+                    pageNumbers: d.page_numbers,
+                    chunkCount: d.chunk_count,
+                    department: d.department,
+                  }),
+                ),
                 pageNumbers: data.trust.page_numbers || [],
-                evidenceSnippets: (data.trust.evidence_snippets || []).map((s: any) => ({
-                  snippetId: s.snippet_id,
-                  documentTitle: s.document_title,
-                  pageNumber: s.page_number,
-                  text: s.text,
-                  similarityScore: s.similarity_score,
-                  rank: s.rank,
-                  department: s.department,
-                })),
+                evidenceSnippets: (data.trust.evidence_snippets || []).map(
+                  (s: any) => ({
+                    snippetId: s.snippet_id,
+                    documentTitle: s.document_title,
+                    pageNumber: s.page_number,
+                    text: s.text,
+                    similarityScore: s.similarity_score,
+                    rank: s.rank,
+                    department: s.department,
+                  }),
+                ),
                 retrievalMetadata: {
-                  vectorStore: data.trust.retrieval_metadata?.vector_store || "Qdrant HNSW",
+                  vectorStore:
+                    data.trust.retrieval_metadata?.vector_store ||
+                    "Qdrant HNSW",
                   topK: data.trust.retrieval_metadata?.top_k || 5,
-                  scoreThreshold: data.trust.retrieval_metadata?.score_threshold || 0.65,
-                  totalRetrievedChunks: data.trust.retrieval_metadata?.total_retrieved_chunks || 0,
-                  searchLatencyMs: data.trust.retrieval_metadata?.search_latency_ms || 0,
+                  scoreThreshold:
+                    data.trust.retrieval_metadata?.score_threshold || 0.65,
+                  totalRetrievedChunks:
+                    data.trust.retrieval_metadata?.total_retrieved_chunks || 0,
+                  searchLatencyMs:
+                    data.trust.retrieval_metadata?.search_latency_ms || 0,
                 },
-                modelIdentifier: data.trust.model_identifier || "gemini-2.5-flash",
+                modelIdentifier:
+                  data.trust.model_identifier || "gemini-2.5-flash",
                 limitations: data.trust.limitations || [],
                 confidence: {
                   isGrounded: data.trust.confidence?.is_grounded ?? true,
                   evidenceCount: data.trust.confidence?.evidence_count ?? 0,
-                  meanSimilarityScore: data.trust.confidence?.mean_similarity_score,
-                  minSimilarityScore: data.trust.confidence?.min_similarity_score,
-                  maxSimilarityScore: data.trust.confidence?.max_similarity_score,
-                  scoreMetric: data.trust.confidence?.score_metric || "cosine_similarity",
-                  verifiabilityRating: data.trust.confidence?.verifiability_rating || "high",
+                  meanSimilarityScore:
+                    data.trust.confidence?.mean_similarity_score,
+                  minSimilarityScore:
+                    data.trust.confidence?.min_similarity_score,
+                  maxSimilarityScore:
+                    data.trust.confidence?.max_similarity_score,
+                  scoreMetric:
+                    data.trust.confidence?.score_metric || "cosine_similarity",
+                  verifiabilityRating:
+                    data.trust.confidence?.verifiability_rating || "high",
                   explanation: data.trust.confidence?.explanation || "",
-                  evaluationBasis: data.trust.confidence?.evaluation_basis || "",
+                  evaluationBasis:
+                    data.trust.confidence?.evaluation_basis || "",
                 },
               }
             : undefined,
@@ -189,7 +214,7 @@ export default function QueryPage() {
         sessions.find(
           (s) =>
             s.question.toLowerCase().includes(queryInput.toLowerCase()) ||
-            queryInput.toLowerCase().includes(s.question.toLowerCase())
+            queryInput.toLowerCase().includes(s.question.toLowerCase()),
         ) || sessions[0];
       const updated: QuerySession = {
         ...matched,
@@ -212,7 +237,9 @@ export default function QueryPage() {
   const openSourceInspector = (doc: SourceDocumentData) => {
     setActiveSourceDoc(doc);
     // Also point activeSnippet to first snippet of this doc if available
-    const matchingSnippet = trust.evidenceSnippets.find((s) => s.documentTitle === doc.documentTitle);
+    const matchingSnippet = trust.evidenceSnippets.find(
+      (s) => s.documentTitle === doc.documentTitle,
+    );
     if (matchingSnippet) {
       setActiveSnippet(matchingSnippet);
     }
@@ -222,14 +249,17 @@ export default function QueryPage() {
   return (
     <div>
       <PageHeader
-        title="Ask a Question"
-        description="Type your question in plain English. We'll search your documents and data to find a verified answer with source citations."
+        title="What would you like to know?"
+        description="You can ask about the documents and datasets you uploaded."
         badge="AI-Powered"
         badgeColor="cyan"
       />
 
       {/* Query Studio Input Box */}
-      <section className="glass-card" style={{ padding: "24px", marginBottom: "28px" }}>
+      <section
+        className="glass-card"
+        style={{ padding: "24px", marginBottom: "28px" }}
+      >
         <div
           style={{
             display: "flex",
@@ -240,15 +270,24 @@ export default function QueryPage() {
             gap: "8px",
           }}
         >
-          <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--text-secondary)" }}>
-            Civic Query Prompt:
+          <span
+            style={{
+              fontSize: "0.85rem",
+              fontWeight: 600,
+              color: "var(--text-secondary)",
+            }}
+          >
+            Your question:
           </span>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <span className="badge badge-cyan" style={{ fontSize: "0.68rem" }}>
-              Engine: {trust.modelIdentifier}
+              AI Engine
             </span>
-            <span className="badge badge-purple" style={{ fontSize: "0.68rem" }}>
-              Vector: {trust.retrievalMetadata.vectorStore}
+            <span
+              className="badge badge-purple"
+              style={{ fontSize: "0.68rem" }}
+            >
+              Source search
             </span>
           </div>
         </div>
@@ -266,7 +305,13 @@ export default function QueryPage() {
 
         {/* Preset Questions Chips */}
         <div style={{ marginBottom: "18px" }}>
-          <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: "8px" }}>
+          <div
+            style={{
+              fontSize: "0.75rem",
+              color: "var(--text-muted)",
+              marginBottom: "8px",
+            }}
+          >
             Suggested Civic Inquiries:
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
@@ -278,8 +323,14 @@ export default function QueryPage() {
                 style={{
                   fontSize: "0.78rem",
                   padding: "6px 12px",
-                  background: queryInput === q ? "rgba(6, 182, 212, 0.15)" : "rgba(30, 41, 59, 0.5)",
-                  borderColor: queryInput === q ? "var(--accent-cyan)" : "var(--border-subtle)",
+                  background:
+                    queryInput === q
+                      ? "rgba(6, 182, 212, 0.15)"
+                      : "rgba(30, 41, 59, 0.5)",
+                  borderColor:
+                    queryInput === q
+                      ? "var(--accent-cyan)"
+                      : "var(--border-subtle)",
                 }}
               >
                 {q}
@@ -300,15 +351,6 @@ export default function QueryPage() {
             gap: "12px",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", fontSize: "0.78rem", color: "var(--text-muted)" }}>
-            <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <span className="badge-dot" style={{ background: "var(--accent-emerald)" }} />
-              Grounding Threshold: &gt;={trust.retrievalMetadata.scoreThreshold} Cosine
-            </span>
-            <span>•</span>
-            <span>Top-K: {trust.retrievalMetadata.topK} Chunks</span>
-          </div>
-
           <button
             onClick={handleRunQuery}
             disabled={isSearching}
@@ -316,7 +358,7 @@ export default function QueryPage() {
             style={{ padding: "10px 22px" }}
           >
             {isSearching ? (
-              <span>Retrieving Grounded Proof...</span>
+              <span>Checking your information...</span>
             ) : (
               <>
                 <svg
@@ -331,7 +373,7 @@ export default function QueryPage() {
                 >
                   <polygon points="5 3 19 12 5 21 5 3" />
                 </svg>
-                Query Trust Layer
+                Ask question
               </>
             )}
           </button>
@@ -339,55 +381,71 @@ export default function QueryPage() {
       </section>
 
       {/* Trust Layer Structured Display */}
-      <section className="glass-card" style={{ padding: "26px", marginBottom: "36px" }}>
+      <section
+        className="glass-card"
+        style={{ padding: "26px", marginBottom: "36px" }}
+      >
         {/* Navigation Tabs */}
         <div className="tab-bar">
           <button
             onClick={() => setActiveTab("answer")}
             className={`tab-item ${activeTab === "answer" ? "active" : ""}`}
           >
-            Answer & Grounding
+            Answer
           </button>
-          {activeSession.calculation && (
-            <button
-              onClick={() => setActiveTab("analysis")}
-              className={`tab-item ${activeTab === "analysis" ? "active" : ""}`}
-            >
-              Analysis & Visualization
-              {activeSession.calculation.chart && (
-                <span
-                  className="badge badge-cyan"
-                  style={{ fontSize: "0.62rem", marginLeft: "6px", textTransform: "uppercase" }}
+
+          <button
+            onClick={() => setShowTechnicalDetails(!showTechnicalDetails)}
+            className="tab-item"
+            style={{
+              marginLeft: "auto",
+              color: "var(--text-muted)",
+              fontSize: "0.8rem",
+              textTransform: "none",
+              letterSpacing: "normal",
+            }}
+          >
+            {showTechnicalDetails
+              ? "[Hide technical details]"
+              : "[Show technical details]"}
+          </button>
+
+          {showTechnicalDetails && (
+            <>
+              {activeSession.calculation && (
+                <button
+                  onClick={() => setActiveTab("analysis")}
+                  className={`tab-item ${activeTab === "analysis" ? "active" : ""}`}
                 >
-                  {activeSession.calculation.chart.chartType}
-                </span>
+                  Calculation Details
+                </button>
               )}
-            </button>
+              <button
+                onClick={() => setActiveTab("evidence")}
+                className={`tab-item ${activeTab === "evidence" ? "active" : ""}`}
+              >
+                Evidence
+              </button>
+              <button
+                onClick={() => setActiveTab("sources")}
+                className={`tab-item ${activeTab === "sources" ? "active" : ""}`}
+              >
+                Sources
+              </button>
+              <button
+                onClick={() => setActiveTab("limitations")}
+                className={`tab-item ${activeTab === "limitations" ? "active" : ""}`}
+              >
+                Limitations
+              </button>
+              <button
+                onClick={() => setActiveTab("model")}
+                className={`tab-item ${activeTab === "model" ? "active" : ""}`}
+              >
+                Model
+              </button>
+            </>
           )}
-          <button
-            onClick={() => setActiveTab("evidence")}
-            className={`tab-item ${activeTab === "evidence" ? "active" : ""}`}
-          >
-            Evidence ({trust.evidenceSnippets.length})
-          </button>
-          <button
-            onClick={() => setActiveTab("sources")}
-            className={`tab-item ${activeTab === "sources" ? "active" : ""}`}
-          >
-            Sources ({trust.sourceDocuments.length})
-          </button>
-          <button
-            onClick={() => setActiveTab("limitations")}
-            className={`tab-item ${activeTab === "limitations" ? "active" : ""}`}
-          >
-            Limitations ({trust.limitations.length})
-          </button>
-          <button
-            onClick={() => setActiveTab("model")}
-            className={`tab-item ${activeTab === "model" ? "active" : ""}`}
-          >
-            Model Information
-          </button>
         </div>
 
         {/* 1. Answer Tab */}
@@ -404,26 +462,37 @@ export default function QueryPage() {
                 gap: "8px",
               }}
             >
-              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "10px" }}
+              >
                 <span className="badge badge-emerald">
-                  <span className="badge-dot" /> Evidence Grounded
+                  <span className="badge-dot" /> Verified
                 </span>
-                <span className="badge badge-cyan" style={{ fontSize: "0.72rem" }}>
-                  Rating: {trust.confidence.verifiabilityRating.toUpperCase()}
+                <span
+                  className="badge badge-cyan"
+                  style={{ fontSize: "0.72rem" }}
+                >
+                  Status: Ready
                 </span>
-                <span style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>
+                <span
+                  style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}
+                >
                   Latency: {activeSession.latencyMs}ms
                 </span>
               </div>
 
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "8px" }}
+              >
                 {trust.evidenceSnippets[0] && (
                   <button
-                    onClick={() => openSnippetInspector(trust.evidenceSnippets[0])}
+                    onClick={() =>
+                      openSnippetInspector(trust.evidenceSnippets[0])
+                    }
                     className="btn btn-secondary"
                     style={{ fontSize: "0.78rem", padding: "6px 14px" }}
                   >
-                    Inspect Supporting Evidence
+                    View source
                   </button>
                 )}
               </div>
@@ -450,7 +519,9 @@ export default function QueryPage() {
             {(activeSession.calculation?.chart || activeSession.chart) && (
               <div style={{ marginBottom: "28px" }}>
                 <AnalyticalChart
-                  chart={activeSession.calculation?.chart || activeSession.chart}
+                  chart={
+                    activeSession.calculation?.chart || activeSession.chart
+                  }
                   calculationTitle={activeSession.calculation?.tableName}
                 />
               </div>
@@ -468,7 +539,7 @@ export default function QueryPage() {
                   marginBottom: "12px",
                 }}
               >
-                Supporting Evidence Snippets ({trust.evidenceSnippets.length})
+                Where this answer came from
               </div>
 
               <div
@@ -497,10 +568,19 @@ export default function QueryPage() {
                         marginBottom: "8px",
                       }}
                     >
-                      <span style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--text-primary)" }}>
+                      <span
+                        style={{
+                          fontSize: "0.85rem",
+                          fontWeight: 700,
+                          color: "var(--text-primary)",
+                        }}
+                      >
                         {snip.documentTitle}
                       </span>
-                      <span className="badge badge-cyan" style={{ fontSize: "0.68rem" }}>
+                      <span
+                        className="badge badge-cyan"
+                        style={{ fontSize: "0.68rem" }}
+                      >
                         Page {snip.pageNumber}
                       </span>
                     </div>
@@ -526,49 +606,92 @@ export default function QueryPage() {
                         paddingTop: "8px",
                       }}
                     >
-                      <span>Rank #{snip.rank}</span>
-                      <span style={{ color: "var(--accent-emerald)", fontFamily: "var(--font-mono)" }}>
-                        Cosine: {snip.similarityScore.toFixed(4)}
-                      </span>
+                      <span>Source</span>
+                      <span
+                        style={{
+                          color: "var(--accent-emerald)",
+                          fontFamily: "var(--font-mono)",
+                        }}
+                      ></span>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Measured Confidence Explanation */}
-            <div
-              style={{
-                background: "rgba(15, 23, 42, 0.5)",
-                border: "1px solid var(--border-subtle)",
-                borderRadius: "var(--radius-md)",
-                padding: "16px 20px",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-                <span className="badge badge-emerald" style={{ fontSize: "0.68rem" }}>
-                  Empirical Confidence
-                </span>
-                <span style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>
-                  Metric: {trust.confidence.scoreMetric}
-                </span>
-              </div>
-              <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", margin: 0, lineHeight: 1.6 }}>
-                {trust.confidence.explanation}
-              </p>
-              <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", marginTop: "6px" }}>
-                Policy: {trust.confidence.evaluationBasis}
-              </div>
-            </div>
+            {showTechnicalDetails && (
+              <>
+                {/* Measured Confidence Explanation */}
+                <div
+                  style={{
+                    background: "rgba(15, 23, 42, 0.5)",
+                    border: "1px solid var(--border-subtle)",
+                    borderRadius: "var(--radius-md)",
+                    padding: "16px 20px",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      marginBottom: "6px",
+                    }}
+                  >
+                    <span
+                      className="badge badge-emerald"
+                      style={{ fontSize: "0.68rem" }}
+                    >
+                      Empirical Confidence
+                    </span>
+                    <span
+                      style={{
+                        fontSize: "0.78rem",
+                        color: "var(--text-muted)",
+                      }}
+                    >
+                      Metric: {trust.confidence.scoreMetric}
+                    </span>
+                  </div>
+                  <p
+                    style={{
+                      fontSize: "0.85rem",
+                      color: "var(--text-secondary)",
+                      margin: 0,
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {trust.confidence.explanation}
+                  </p>
+                  <div
+                    style={{
+                      fontSize: "0.72rem",
+                      color: "var(--text-muted)",
+                      marginTop: "6px",
+                    }}
+                  >
+                    Policy: {trust.confidence.evaluationBasis}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         )}
 
         {/* Analysis & Chart Tab (Stage 12) */}
         {activeTab === "analysis" && activeSession.calculation && (
           <div>
-            <div style={{ marginBottom: "18px", fontSize: "0.88rem", color: "var(--text-secondary)", lineHeight: 1.6 }}>
-              Verifiable columnar analytical calculation executed directly by the in-memory DuckDB query engine,
-              guaranteeing zero LLM arithmetic hallucination.
+            <div
+              style={{
+                marginBottom: "18px",
+                fontSize: "0.88rem",
+                color: "var(--text-secondary)",
+                lineHeight: 1.6,
+              }}
+            >
+              Verifiable columnar analytical calculation executed directly by
+              the in-memory DuckDB query engine, guaranteeing zero LLM
+              arithmetic hallucination.
             </div>
 
             <SqlTraceViewer calculation={activeSession.calculation} />
@@ -578,12 +701,22 @@ export default function QueryPage() {
         {/* 2. Evidence Tab */}
         {activeTab === "evidence" && (
           <div>
-            <div style={{ marginBottom: "18px", fontSize: "0.88rem", color: "var(--text-secondary)", lineHeight: 1.6 }}>
-              Verbatim text snippets retrieved directly from indexed municipal records backing this response.
-              Click any snippet to open the detailed provenance inspector.
+            <div
+              style={{
+                marginBottom: "18px",
+                fontSize: "0.88rem",
+                color: "var(--text-secondary)",
+                lineHeight: 1.6,
+              }}
+            >
+              Verbatim text snippets retrieved directly from indexed municipal
+              records backing this response. Click any snippet to open the
+              detailed provenance inspector.
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "16px" }}
+            >
               {trust.evidenceSnippets.map((snip) => (
                 <div
                   key={snip.snippetId}
@@ -604,17 +737,40 @@ export default function QueryPage() {
                       gap: "8px",
                     }}
                   >
-                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                      <span className="badge badge-purple" style={{ fontSize: "0.72rem" }}>
-                        Rank #{snip.rank}
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                      }}
+                    >
+                      <span
+                        className="badge badge-purple"
+                        style={{ fontSize: "0.72rem" }}
+                      >
+                        Source
                       </span>
-                      <strong style={{ fontSize: "0.95rem", color: "var(--accent-cyan)" }}>
+                      <strong
+                        style={{
+                          fontSize: "0.95rem",
+                          color: "var(--accent-cyan)",
+                        }}
+                      >
                         {snip.documentTitle}
                       </strong>
                     </div>
 
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                      <span className="badge badge-cyan" style={{ fontSize: "0.72rem" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                      }}
+                    >
+                      <span
+                        className="badge badge-cyan"
+                        style={{ fontSize: "0.72rem" }}
+                      >
                         Page {snip.pageNumber}
                       </span>
                       <span
@@ -623,15 +779,13 @@ export default function QueryPage() {
                           fontFamily: "var(--font-mono)",
                           color: "var(--accent-emerald)",
                         }}
-                      >
-                        Cosine: {snip.similarityScore.toFixed(4)}
-                      </span>
+                      ></span>
                       <button
                         onClick={() => openSnippetInspector(snip)}
                         className="btn btn-secondary"
                         style={{ fontSize: "0.75rem", padding: "4px 10px" }}
                       >
-                        Inspect Supporting Evidence
+                        View source
                       </button>
                     </div>
                   </div>
@@ -663,7 +817,9 @@ export default function QueryPage() {
                     }}
                   >
                     <span>Chunk ID: {snip.snippetId}</span>
-                    {snip.department && <span>Attribution: {snip.department}</span>}
+                    {snip.department && (
+                      <span>Attribution: {snip.department}</span>
+                    )}
                   </div>
                 </div>
               ))}
@@ -674,42 +830,107 @@ export default function QueryPage() {
         {/* 3. Sources Tab */}
         {activeTab === "sources" && (
           <div>
-            <div style={{ marginBottom: "18px", fontSize: "0.88rem", color: "var(--text-secondary)", lineHeight: 1.6 }}>
-              Source municipal documents referenced during question grounding, with page citations and chunk volume:
+            <div
+              style={{
+                marginBottom: "18px",
+                fontSize: "0.88rem",
+                color: "var(--text-secondary)",
+                lineHeight: 1.6,
+              }}
+            >
+              Source municipal documents referenced during question grounding,
+              with page citations and chunk volume:
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "16px" }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+                gap: "16px",
+              }}
+            >
               {trust.sourceDocuments.map((doc) => (
                 <div
                   key={doc.documentTitle}
                   className="glass-card"
-                  style={{ padding: "20px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+                  style={{
+                    padding: "20px",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                  }}
                 >
                   <div>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
-                      <span className="badge badge-cyan" style={{ fontSize: "0.68rem" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        marginBottom: "8px",
+                      }}
+                    >
+                      <span
+                        className="badge badge-cyan"
+                        style={{ fontSize: "0.68rem" }}
+                      >
                         Official Record
                       </span>
-                      <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
+                      <span
+                        style={{
+                          fontSize: "0.75rem",
+                          color: "var(--text-muted)",
+                        }}
+                      >
                         {doc.chunkCount} chunk(s) cited
                       </span>
                     </div>
 
-                    <h4 style={{ fontSize: "1.02rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "6px" }}>
+                    <h4
+                      style={{
+                        fontSize: "1.02rem",
+                        fontWeight: 700,
+                        color: "var(--text-primary)",
+                        marginBottom: "6px",
+                      }}
+                    >
                       {doc.documentTitle}
                     </h4>
 
                     {doc.department && (
-                      <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "12px" }}>
+                      <div
+                        style={{
+                          fontSize: "0.8rem",
+                          color: "var(--text-secondary)",
+                          marginBottom: "12px",
+                        }}
+                      >
                         Department: {doc.department}
                       </div>
                     )}
 
                     <div style={{ marginBottom: "14px" }}>
-                      <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Cited Pages:</span>
-                      <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginTop: "4px" }}>
+                      <span
+                        style={{
+                          fontSize: "0.75rem",
+                          color: "var(--text-muted)",
+                        }}
+                      >
+                        Cited Pages:
+                      </span>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: "6px",
+                          marginTop: "4px",
+                        }}
+                      >
                         {doc.pageNumbers.map((p) => (
-                          <span key={p} className="badge badge-purple" style={{ fontSize: "0.72rem" }}>
+                          <span
+                            key={p}
+                            className="badge badge-purple"
+                            style={{ fontSize: "0.72rem" }}
+                          >
                             Page {p}
                           </span>
                         ))}
@@ -733,47 +954,39 @@ export default function QueryPage() {
         {/* 4. Limitations Tab */}
         {activeTab === "limitations" && (
           <div>
-            <div style={{ marginBottom: "18px", fontSize: "0.88rem", color: "var(--text-secondary)", lineHeight: 1.6 }}>
-              OpenCitizen AI strictly enforces transparent civic limitations to prevent ungrounded claims and protect user trust:
+            <div
+              style={{
+                marginBottom: "18px",
+                fontSize: "0.88rem",
+                color: "var(--text-secondary)",
+                lineHeight: 1.6,
+              }}
+            >
+              Limitations:
             </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              {trust.limitations.map((lim, idx) => (
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "12px" }}
+            >
+              <div
+                style={{
+                  background: "rgba(15, 23, 42, 0.6)",
+                  border: "1px solid var(--border-subtle)",
+                  borderRadius: "var(--radius-md)",
+                  padding: "16px 20px",
+                }}
+              >
                 <div
-                  key={idx}
                   style={{
-                    background: "rgba(15, 23, 42, 0.6)",
-                    border: "1px solid var(--border-subtle)",
-                    borderRadius: "var(--radius-md)",
-                    padding: "16px 20px",
-                    display: "flex",
-                    alignItems: "flex-start",
-                    gap: "14px",
+                    fontSize: "0.88rem",
+                    color: "var(--text-primary)",
+                    lineHeight: 1.6,
                   }}
                 >
-                  <div
-                    style={{
-                      background: "rgba(6, 182, 212, 0.15)",
-                      color: "var(--accent-cyan)",
-                      borderRadius: "50%",
-                      width: "24px",
-                      height: "24px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "0.75rem",
-                      fontWeight: 700,
-                      flexShrink: 0,
-                      marginTop: "2px",
-                    }}
-                  >
-                    {idx + 1}
-                  </div>
-                  <div style={{ fontSize: "0.88rem", color: "var(--text-primary)", lineHeight: 1.6 }}>
-                    {lim}
-                  </div>
+                  I could not find enough information in your uploaded documents
+                  to answer this question. You can try asking the question in a
+                  different way or upload another document.
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         )}
@@ -781,8 +994,16 @@ export default function QueryPage() {
         {/* 5. Model Information Tab */}
         {activeTab === "model" && (
           <div>
-            <div style={{ marginBottom: "18px", fontSize: "0.88rem", color: "var(--text-secondary)", lineHeight: 1.6 }}>
-              Technical specifications, retrieval parameters, and genuine measured confidence metrics:
+            <div
+              style={{
+                marginBottom: "18px",
+                fontSize: "0.88rem",
+                color: "var(--text-secondary)",
+                lineHeight: 1.6,
+              }}
+            >
+              Technical specifications, retrieval parameters, and genuine
+              measured confidence metrics:
             </div>
 
             <div
@@ -794,49 +1015,125 @@ export default function QueryPage() {
               }}
             >
               <div className="glass-card" style={{ padding: "18px 20px" }}>
-                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: "4px" }}>
+                <div
+                  style={{
+                    fontSize: "0.75rem",
+                    color: "var(--text-muted)",
+                    marginBottom: "4px",
+                  }}
+                >
                   AI Model Identifier
                 </div>
-                <div style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--accent-cyan)" }}>
+                <div
+                  style={{
+                    fontSize: "1.25rem",
+                    fontWeight: 700,
+                    color: "var(--accent-cyan)",
+                  }}
+                >
                   {trust.modelIdentifier}
                 </div>
-                <div style={{ fontSize: "0.72rem", color: "var(--text-secondary)", marginTop: "4px" }}>
+                <div
+                  style={{
+                    fontSize: "0.72rem",
+                    color: "var(--text-secondary)",
+                    marginTop: "4px",
+                  }}
+                >
                   Clean Provider Abstraction (Gemini API)
                 </div>
               </div>
 
               <div className="glass-card" style={{ padding: "18px 20px" }}>
-                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: "4px" }}>
+                <div
+                  style={{
+                    fontSize: "0.75rem",
+                    color: "var(--text-muted)",
+                    marginBottom: "4px",
+                  }}
+                >
                   Retrieval Engine
                 </div>
-                <div style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--accent-purple)" }}>
+                <div
+                  style={{
+                    fontSize: "1.25rem",
+                    fontWeight: 700,
+                    color: "var(--accent-purple)",
+                  }}
+                >
                   {trust.retrievalMetadata.vectorStore}
                 </div>
-                <div style={{ fontSize: "0.72rem", color: "var(--text-secondary)", marginTop: "4px" }}>
+                <div
+                  style={{
+                    fontSize: "0.72rem",
+                    color: "var(--text-secondary)",
+                    marginTop: "4px",
+                  }}
+                >
                   Cosine Metric • Top-K: {trust.retrievalMetadata.topK}
                 </div>
               </div>
 
               <div className="glass-card" style={{ padding: "18px 20px" }}>
-                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: "4px" }}>
+                <div
+                  style={{
+                    fontSize: "0.75rem",
+                    color: "var(--text-muted)",
+                    marginBottom: "4px",
+                  }}
+                >
                   Measured Mean Similarity
                 </div>
-                <div style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--accent-emerald)", fontFamily: "var(--font-mono)" }}>
-                  {trust.confidence.meanSimilarityScore !== undefined ? trust.confidence.meanSimilarityScore.toFixed(4) : "N/A"}
+                <div
+                  style={{
+                    fontSize: "1.25rem",
+                    fontWeight: 700,
+                    color: "var(--accent-emerald)",
+                    fontFamily: "var(--font-mono)",
+                  }}
+                >
+                  {trust.confidence.meanSimilarityScore !== undefined
+                    ? trust.confidence.meanSimilarityScore.toFixed(4)
+                    : "N/A"}
                 </div>
-                <div style={{ fontSize: "0.72rem", color: "var(--text-secondary)", marginTop: "4px" }}>
-                  Range: {trust.confidence.minSimilarityScore?.toFixed(4)} - {trust.confidence.maxSimilarityScore?.toFixed(4)}
+                <div
+                  style={{
+                    fontSize: "0.72rem",
+                    color: "var(--text-secondary)",
+                    marginTop: "4px",
+                  }}
+                >
+                  Range: {trust.confidence.minSimilarityScore?.toFixed(4)} -{" "}
+                  {trust.confidence.maxSimilarityScore?.toFixed(4)}
                 </div>
               </div>
 
               <div className="glass-card" style={{ padding: "18px 20px" }}>
-                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: "4px" }}>
+                <div
+                  style={{
+                    fontSize: "0.75rem",
+                    color: "var(--text-muted)",
+                    marginBottom: "4px",
+                  }}
+                >
                   Verifiability Level
                 </div>
-                <div style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--accent-emerald)" }}>
+                <div
+                  style={{
+                    fontSize: "1.25rem",
+                    fontWeight: 700,
+                    color: "var(--accent-emerald)",
+                  }}
+                >
                   {trust.confidence.verifiabilityRating.toUpperCase()}
                 </div>
-                <div style={{ fontSize: "0.72rem", color: "var(--text-secondary)", marginTop: "4px" }}>
+                <div
+                  style={{
+                    fontSize: "0.72rem",
+                    color: "var(--text-secondary)",
+                    marginTop: "4px",
+                  }}
+                >
                   {trust.confidence.evidenceCount} supporting chunk(s)
                 </div>
               </div>
@@ -851,13 +1148,30 @@ export default function QueryPage() {
                 padding: "18px 22px",
               }}
             >
-              <h5 style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "6px" }}>
+              <h5
+                style={{
+                  fontSize: "0.85rem",
+                  fontWeight: 700,
+                  color: "var(--text-primary)",
+                  marginBottom: "6px",
+                }}
+              >
                 Zero Synthetic Scores Policy
               </h5>
-              <p style={{ fontSize: "0.82rem", color: "var(--text-secondary)", lineHeight: 1.6, margin: 0 }}>
-                {trust.confidence.evaluationBasis}. Unlike typical AI demos, OpenCitizen AI strictly avoids
-                generating fake statistical confidence percentages (such as &ldquo;98.7% confident&rdquo;) to make the interface
-                look impressive. All figures represent authentic vector cosine similarity and verifiable page boundaries.
+              <p
+                style={{
+                  fontSize: "0.82rem",
+                  color: "var(--text-secondary)",
+                  lineHeight: 1.6,
+                  margin: 0,
+                }}
+              >
+                {trust.confidence.evaluationBasis}. Unlike typical AI demos,
+                OpenCitizen AI strictly avoids generating fake statistical
+                confidence percentages (such as &ldquo;98.7% confident&rdquo;)
+                to make the interface look impressive. All figures represent
+                authentic vector cosine similarity and verifiable page
+                boundaries.
               </p>
             </div>
           </div>

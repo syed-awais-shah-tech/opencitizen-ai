@@ -259,32 +259,24 @@ export default function DocumentsPage() {
     });
   };
 
-  const getStageLabel = (stage: string) => {
+    const getStageLabel = (stage: string) => {
     switch (stage) {
-      case "queued":
-        return "Job Queued in Worker Queue";
-      case "extraction":
-        return "Stage 1/4: Text & Page Boundary Extraction";
-      case "chunking":
-        return "Stage 2/4: Traceable Context Chunking";
-      case "embedding":
-        return "Stage 3/4: Computing Semantic Embeddings";
-      case "vector_storage":
-        return "Stage 4/4: Vector Indexing & BM25 Storage";
-      case "completed":
-        return "Ingestion Complete & Vector Indexed";
-      case "failed":
-        return "Ingestion Pipeline Failed";
-      default:
-        return stage.toUpperCase();
+      case "queued": return "Waiting to be prepared";
+      case "extraction": return "Step 1: Uploading your file";
+      case "chunking": return "Step 2: Reading the document";
+      case "embedding": return "Step 3: Preparing it for questions";
+      case "vector_storage": return "Step 3: Preparing it for questions";
+      case "completed": return "Ready";
+      case "failed": return "Could not process";
+      default: return stage;
     }
   };
 
   return (
     <div>
       <PageHeader
-        title="My Documents"
-        description="Upload and manage your PDF documents. Once processed, you can ask questions about their contents and get verified answers with source citations."
+        title="Add a document"
+        description="Upload a public report, budget, plan, or other document. We will prepare it so you can ask questions about it."
         badge="Documents"
         badgeColor="cyan"
         actions={
@@ -301,7 +293,7 @@ export default function DocumentsPage() {
               <polyline points="17 8 12 3 7 8"/>
               <line x1="12" y1="3" x2="12" y2="15"/>
             </svg>
-            Upload Document
+            Add a document
           </button>
         }
       />
@@ -364,10 +356,10 @@ export default function DocumentsPage() {
         <div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
             <h2 style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--text-primary)" }}>
-              Ingested PDF Documents ({filteredDocs.length})
+              Available Documents ({filteredDocs.length})
             </h2>
             <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
-              Select document to inspect status & vector chunks
+              Select a document to view details
             </span>
           </div>
 
@@ -406,19 +398,19 @@ export default function DocumentsPage() {
               {/* Status Badge */}
               {selectedDoc.status === "completed" || selectedDoc.status === "ready" ? (
                 <span className="badge badge-emerald">
-                  <span className="badge-dot" /> Ready & Audited
+                  <span className="badge-dot" /> Ready
                 </span>
               ) : selectedDoc.status === "processing" ? (
                 <span className="badge badge-cyan">
-                  <span className="badge-dot-pulsing" /> Processing ({selectedDoc.stage || "Pipeline"})
+                  <span className="badge-dot-pulsing" /> Preparing
                 </span>
               ) : selectedDoc.status === "queued" ? (
                 <span className="badge badge-amber">
-                  <span className="badge-dot" /> Queued in Worker
+                  <span className="badge-dot" /> Waiting to be prepared
                 </span>
               ) : (
                 <span className="badge badge-rose">
-                  <span className="badge-dot" /> Ingestion Failed
+                  <span className="badge-dot" /> Could not process
                 </span>
               )}
             </div>
@@ -437,13 +429,9 @@ export default function DocumentsPage() {
                     <circle cx="12" cy="12" r="10"/>
                     <polyline points="12 6 12 12 16 14"/>
                   </svg>
-                  <h4 style={{ fontSize: "0.95rem", fontWeight: 700, color: "#fbbf24" }}>
-                    Job Queued in Background Worker
-                  </h4>
-                </div>
-                <p style={{ fontSize: "0.82rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
-                  This document upload was registered non-blockingly. An asynchronous background task has been created ({selectedDoc.jobId || "job_queue"}) and is awaiting worker thread pickup for text extraction, chunking, and Qdrant embedding.
-                </p>
+                  <h4 style={{ fontSize: "0.95rem", fontWeight: 700, color: "#fbbf24" }}>Waiting to be prepared</h4>
+</div>
+<p style={{ fontSize: "0.82rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>Your document is in line to be processed.</p>
               </div>
             )}
 
@@ -530,23 +518,16 @@ export default function DocumentsPage() {
                     <line x1="12" y1="8" x2="12" y2="12"/>
                     <line x1="12" y1="16" x2="12.01" y2="16"/>
                   </svg>
-                  <h4 style={{ fontSize: "0.95rem", fontWeight: 700, color: "#fb7185" }}>
-                    Ingestion Pipeline Failure
-                  </h4>
-                </div>
-                <p style={{ fontSize: "0.82rem", color: "var(--text-secondary)", lineHeight: 1.5, marginBottom: "10px" }}>
-                  The worker encountered an error while processing this document:
-                </p>
-                <div className="code-box" style={{ color: "#fb7185", background: "rgba(0,0,0,0.4)", fontSize: "0.75rem" }}>
-                  {selectedDoc.errorMessage || "ExtractionError: PDF stream corrupted or contained unsupported font encoding."}
-                </div>
+                  <h4 style={{ fontSize: "0.95rem", fontWeight: 700, color: "#fb7185" }}>We could not read this file.</h4>
+</div>
+<p style={{ fontSize: "0.82rem", color: "var(--text-secondary)", lineHeight: 1.5, marginBottom: "10px" }}>Please check that the file opens normally and try again.</p>
               </div>
             )}
 
-            {/* Document Statistics Summary */}
+                        {/* Document Statistics Summary */}
             <div style={{
               display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
+              gridTemplateColumns: "repeat(2, 1fr)",
               gap: "12px",
               padding: "12px",
               background: "rgba(10, 15, 29, 0.6)",
@@ -563,19 +544,26 @@ export default function DocumentsPage() {
               </div>
               <div>
                 <div style={{ fontSize: "1.2rem", fontWeight: 700, color: "var(--accent-purple)" }}>
-                  {selectedDoc.chunkCount}
+                  {selectedDoc.department}
                 </div>
-                <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Vector Chunks</div>
-              </div>
-              <div>
-                <div style={{ fontSize: "1.2rem", fontWeight: 700, color: "var(--accent-emerald)" }}>
-                  {selectedDoc.size}
-                </div>
-                <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Storage Footprint</div>
+                <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Organization</div>
               </div>
             </div>
+            
+            {selectedDoc.status === "ready" || selectedDoc.status === "completed" ? (
+              <div style={{ marginBottom: "20px", textAlign: "center" }}>
+                <a href="/query" className="btn btn-primary" style={{ width: "100%", textDecoration: "none", display: "inline-block" }}>
+                  Ask a question about this document
+                </a>
+              </div>
+            ) : null}
 
-            {/* Chunk Inspector */}
+            {/* Optional Technical Details Toggle */}
+            <details style={{ marginTop: "24px" }}>
+              <summary style={{ cursor: "pointer", fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: "12px" }}>
+                [Technical details]
+              </summary>
+
             {(selectedDoc.status === "ready" || selectedDoc.status === "completed") && (
               <div>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
@@ -619,6 +607,7 @@ export default function DocumentsPage() {
                 </div>
               </div>
             )}
+          </details>
           </div>
         </div>
       </div>
@@ -640,10 +629,10 @@ export default function DocumentsPage() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                 <span className="badge badge-cyan" style={{ fontSize: "0.7rem" }}>
-                  Stage 16
+                  Upload
                 </span>
                 <h3 style={{ fontSize: "1.15rem", fontWeight: 700, color: "var(--text-primary)" }}>
-                  Upload Municipal PDF Document
+                  Add a document
                 </h3>
               </div>
               <button
@@ -658,7 +647,7 @@ export default function DocumentsPage() {
             {!activeJob ? (
               <form onSubmit={handleUploadSubmit}>
                 <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginBottom: "16px" }}>
-                  Uploads are handled non-blockingly via background worker jobs. The HTTP request returns immediately with a tracking job ID while text extraction, chunking, embedding, and vector storage execute asynchronously.
+                  Upload a public report, budget, plan, or other document. We will prepare it so you can ask questions about it.
                 </p>
 
                 {/* File Dropzone */}
@@ -693,10 +682,10 @@ export default function DocumentsPage() {
                     <line x1="15" y1="15" x2="12" y2="12"/>
                   </svg>
                   <div style={{ fontSize: "0.88rem", fontWeight: 600, color: "var(--text-primary)", marginBottom: "4px" }}>
-                    {selectedFile ? selectedFile.name : "Select or drag & drop PDF document"}
+                    {selectedFile ? selectedFile.name : "Drop your file here or choose a file"}
                   </div>
                   <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
-                    {selectedFile ? `${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB` : "Strict magic-byte validation, max 25 MB"}
+                    {selectedFile ? `${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB` : "Supported formats: PDF, CSV, Excel, JSON, and Parquet"}
                   </div>
                 </div>
 
@@ -754,7 +743,7 @@ export default function DocumentsPage() {
                     className="btn btn-primary"
                     disabled={!selectedFile || isSubmitting}
                   >
-                    {isSubmitting ? "Queueing Job..." : "Queue Background Ingestion"}
+                    {isSubmitting ? "Uploading..." : "Upload Document"}
                   </button>
                 </div>
               </form>
@@ -770,7 +759,7 @@ export default function DocumentsPage() {
                 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
                     <span style={{ fontSize: "0.75rem", color: "var(--accent-cyan)", fontFamily: "var(--font-mono)" }}>
-                      Job ID: {activeJob.id}
+                      
                     </span>
                     <span className={`badge ${
                       activeJob.status === "completed"
@@ -815,7 +804,7 @@ export default function DocumentsPage() {
 
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.72rem", color: "var(--text-muted)" }}>
                     <span>Progress: {activeJob.progressPct}%</span>
-                    <span>Pages: {activeJob.totalPages} • Chunks: {activeJob.totalChunks}</span>
+                    
                   </div>
                 </div>
 
@@ -829,7 +818,7 @@ export default function DocumentsPage() {
                     fontSize: "0.82rem",
                     marginBottom: "16px",
                   }}>
-                    ✓ Ingestion complete! The document is fully vector-indexed and ready for RAG inquiries.
+                    Your document is ready.
                   </div>
                 )}
 
@@ -843,7 +832,7 @@ export default function DocumentsPage() {
                     fontSize: "0.82rem",
                     marginBottom: "16px",
                   }}>
-                    ✕ Job failed: {activeJob.errorMessage || "Unknown error during ingestion."}
+                    We could not read this file. Please check that the file opens normally and try again.
                   </div>
                 )}
 
@@ -855,7 +844,7 @@ export default function DocumentsPage() {
                     }}
                     className="btn btn-primary"
                   >
-                    {activeJob.status === "completed" ? "Done & View Chunks" : "Close Tracker"}
+                    {activeJob.status === "completed" ? "Done" : "Close Tracker"}
                   </button>
                 </div>
               </div>

@@ -43,10 +43,10 @@ export default function SqlTraceViewer({ calculation }: SqlTraceViewerProps) {
           </div>
           <div>
             <div style={{ fontSize: "0.95rem", fontWeight: 700, color: "var(--text-primary)" }}>
-              DuckDB SQL Trace & Derivation
+              Calculation details
             </div>
             <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
-              Target Table: <code style={{ color: "var(--accent-cyan)" }}>{calculation.tableName}</code>
+              Data Source: <code style={{ color: "var(--accent-cyan)" }}>{calculation.tableName}</code>
             </div>
           </div>
         </div>
