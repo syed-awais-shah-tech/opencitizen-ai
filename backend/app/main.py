@@ -10,12 +10,14 @@ from app.api import api_router
 from app.api.routes.health import router as health_router
 from app.core.config import settings
 from app.core.errors import setup_exception_handlers
+from app.db.session import create_tables
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Application lifespan context for startup and shutdown events."""
-    # Startup logic: database connections, vector client init in later stages
+    # Ensure database schema tables exist
+    create_tables()
     yield
     # Teardown logic
 

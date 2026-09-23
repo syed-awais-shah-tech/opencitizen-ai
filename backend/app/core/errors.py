@@ -61,6 +61,23 @@ class QueryProcessingError(AppException):
         )
 
 
+def _cors_headers(request: Request) -> dict[str, str]:
+    """Helper to attach CORS headers to error responses if origin is allowed."""
+    from app.core.config import settings
+
+    origin = request.headers.get("origin")
+    if not origin:
+        return {}
+    allowed = settings.CORS_ORIGINS
+    if "*" in allowed or origin in allowed:
+        return {
+            "Access-Control-Allow-Origin": origin,
+            "Access-Control-Allow-Credentials": "true",
+            "Vary": "Origin",
+        }
+    return {}
+
+
 def setup_exception_handlers(app: FastAPI) -> None:
     """Register custom exception handlers on the FastAPI application."""
 
@@ -76,6 +93,7 @@ def setup_exception_handlers(app: FastAPI) -> None:
                 "message": exc.message,
                 "details": exc.details,
             },
+            headers=_cors_headers(_request),
         )
 
     @app.exception_handler(RequestValidationError)
@@ -92,6 +110,7 @@ def setup_exception_handlers(app: FastAPI) -> None:
                 "message": "Invalid request payload or query parameters.",
                 "details": exc.errors(),
             },
+            headers=_cors_headers(_request),
         )
 
     @app.exception_handler(StarletteHTTPException)
@@ -106,6 +125,7 @@ def setup_exception_handlers(app: FastAPI) -> None:
                 "message": str(exc.detail),
                 "details": None,
             },
+            headers=_cors_headers(_request),
         )
 
     @app.exception_handler(Exception)
@@ -127,4 +147,6 @@ def setup_exception_handlers(app: FastAPI) -> None:
                 "message": "An internal server error occurred. Please contact the system administrator.",
                 "details": None,
             },
+            headers=_cors_headers(_request),
         )
+

@@ -1,5 +1,8 @@
 """Core configuration and system settings."""
 
+import json
+from typing import Any
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -14,6 +17,32 @@ class Settings(BaseSettings):
         "http://localhost:3000",
         "http://127.0.0.1:3000",
     ]
+
+    @field_validator("CORS_ORIGINS", mode="before")
+    @classmethod
+    def assemble_cors_origins(cls, v: Any) -> list[str]:
+        """Parse CORS_ORIGINS from list, JSON string, or comma-separated string."""
+        origins: list[str] = []
+        if isinstance(v, str):
+            v_str = v.strip()
+            if v_str.startswith("[") and v_str.endswith("]"):
+                try:
+                    parsed = json.loads(v_str)
+                    if isinstance(parsed, list):
+                        origins = [str(item).strip() for item in parsed if str(item).strip()]
+                except json.JSONDecodeError:
+                    origins = [part.strip() for part in v_str.strip("[]").split(",") if part.strip()]
+            else:
+                origins = [part.strip() for part in v_str.split(",") if part.strip()]
+        elif isinstance(v, (list, tuple)):
+            origins = [str(item).strip() for item in v if str(item).strip()]
+
+        # Ensure local development origins are always present
+        local_dev_origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
+        for local_origin in local_dev_origins:
+            if local_origin not in origins:
+                origins.append(local_origin)
+        return origins
 
     # Database settings (PostgreSQL for metadata)
     POSTGRES_SERVER: str = "localhost"
@@ -56,7 +85,7 @@ class Settings(BaseSettings):
     RAG_SCORE_THRESHOLD: float = 0.0
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=(".env", "backend/.env", "../.env"),
         env_file_encoding="utf-8",
         case_sensitive=True,
         extra="ignore",
