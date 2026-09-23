@@ -247,944 +247,158 @@ export default function QueryPage() {
   };
 
   return (
-    <div>
-      <PageHeader
-        title="What would you like to know?"
-        description="You can ask about the documents and datasets you uploaded."
-        badge="AI-Powered"
-        badgeColor="cyan"
-      />
-
-      {/* Query Studio Input Box */}
-      <section
-        className="glass-card"
-        style={{ padding: "24px", marginBottom: "28px" }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: "12px",
-            flexWrap: "wrap",
-            gap: "8px",
-          }}
-        >
-          <span
-            style={{
-              fontSize: "0.85rem",
-              fontWeight: 600,
-              color: "var(--text-secondary)",
-            }}
-          >
-            Your question:
-          </span>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <span className="badge badge-cyan" style={{ fontSize: "0.68rem" }}>
-              AI Engine
-            </span>
-            <span
-              className="badge badge-purple"
-              style={{ fontSize: "0.68rem" }}
-            >
-              Source search
-            </span>
-          </div>
-        </div>
-
-        <div style={{ marginBottom: "16px" }}>
-          <textarea
-            rows={3}
+    <div style={{ maxWidth: "700px", margin: "0 auto", padding: "40px 20px" }}>
+      {/* Question Section */}
+      <div style={{ marginBottom: "40px" }}>
+        <h2 style={{ fontSize: "1rem", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "8px" }}>
+          Question
+        </h2>
+        <h1 style={{ fontSize: "2rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "20px" }}>
+          What would you like to know?
+        </h1>
+        
+        <div style={{ position: "relative", marginBottom: "20px" }}>
+          <input
+            type="text"
             value={queryInput}
             onChange={(e) => setQueryInput(e.target.value)}
-            placeholder="Ask a question regarding city budgets, departmental spending, or public works..."
-            className="input-control"
-            style={{ fontSize: "1rem", lineHeight: 1.6 }}
+            placeholder="How much was spent on public transport?"
+            style={{
+              width: "100%",
+              padding: "16px 20px",
+              fontSize: "1.1rem",
+              background: "rgba(15, 23, 42, 0.6)",
+              border: "1px solid var(--border-subtle)",
+              borderRadius: "var(--radius-md)",
+              color: "var(--text-primary)",
+              outline: "none",
+            }}
           />
         </div>
-
-        {/* Preset Questions Chips */}
-        <div style={{ marginBottom: "18px" }}>
-          <div
-            style={{
-              fontSize: "0.75rem",
-              color: "var(--text-muted)",
-              marginBottom: "8px",
-            }}
-          >
-            Suggested Civic Inquiries:
-          </div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-            {PRESET_QUESTIONS.map((q) => (
-              <button
-                key={q}
-                onClick={() => handleSelectPreset(q)}
-                className="btn btn-secondary"
-                style={{
-                  fontSize: "0.78rem",
-                  padding: "6px 12px",
-                  background:
-                    queryInput === q
-                      ? "rgba(6, 182, 212, 0.15)"
-                      : "rgba(30, 41, 59, 0.5)",
-                  borderColor:
-                    queryInput === q
-                      ? "var(--accent-cyan)"
-                      : "var(--border-subtle)",
-                }}
-              >
-                {q}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Action Controls */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            borderTop: "1px solid var(--border-subtle)",
-            paddingTop: "16px",
-            flexWrap: "wrap",
-            gap: "12px",
-          }}
-        >
+        
+        <div style={{ marginBottom: "24px" }}>
           <button
             onClick={handleRunQuery}
             disabled={isSearching}
             className="btn btn-primary"
-            style={{ padding: "10px 22px" }}
+            style={{ padding: "12px 28px", fontSize: "1.05rem" }}
           >
-            {isSearching ? (
-              <span>Checking your information...</span>
-            ) : (
-              <>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <polygon points="5 3 19 12 5 21 5 3" />
-                </svg>
-                Ask question
-              </>
-            )}
+            {isSearching ? "Checking..." : "[ Ask ]"}
           </button>
         </div>
-      </section>
 
-      {/* Trust Layer Structured Display */}
-      <section
-        className="glass-card"
-        style={{ padding: "26px", marginBottom: "36px" }}
-      >
-        {/* Navigation Tabs */}
-        <div className="tab-bar">
-          <button
-            onClick={() => setActiveTab("answer")}
-            className={`tab-item ${activeTab === "answer" ? "active" : ""}`}
-          >
+        <div>
+          <div style={{ fontSize: "0.95rem", color: "var(--text-secondary)", marginBottom: "12px" }}>
+            Try asking:
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <button onClick={() => setQueryInput("What does this report say about housing?")} style={{ background: "none", border: "none", color: "var(--accent-cyan)", cursor: "pointer", textAlign: "left", fontSize: "0.95rem" }}>
+              "What does this report say about housing?"
+            </button>
+            <button onClick={() => setQueryInput("How much money was spent?")} style={{ background: "none", border: "none", color: "var(--accent-cyan)", cursor: "pointer", textAlign: "left", fontSize: "0.95rem" }}>
+              "How much money was spent?"
+            </button>
+            <button onClick={() => setQueryInput("What projects are planned?")} style={{ background: "none", border: "none", color: "var(--accent-cyan)", cursor: "pointer", textAlign: "left", fontSize: "0.95rem" }}>
+              "What projects are planned?"
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Answer Section */}
+      {trust && !isSearching && (
+        <div style={{ borderTop: "1px solid var(--border-subtle)", paddingTop: "40px" }}>
+          <h2 style={{ fontSize: "1rem", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "8px" }}>
             Answer
-          </button>
+          </h2>
+          <h1 style={{ fontSize: "2rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "24px" }}>
+            Answer
+          </h1>
+          
+          <div style={{ fontSize: "1.2rem", color: "var(--text-primary)", lineHeight: 1.6, marginBottom: "40px" }}>
+            {trust.answer}
+          </div>
 
-          <button
-            onClick={() => setShowTechnicalDetails(!showTechnicalDetails)}
-            className="tab-item"
-            style={{
-              marginLeft: "auto",
-              color: "var(--text-muted)",
-              fontSize: "0.8rem",
-              textTransform: "none",
-              letterSpacing: "normal",
-            }}
-          >
-            {showTechnicalDetails
-              ? "[Hide technical details]"
-              : "[Show technical details]"}
-          </button>
+          {trust.evidenceSnippets && trust.evidenceSnippets.length > 0 && (
+            <div style={{ marginBottom: "32px" }}>
+              <h3 style={{ fontSize: "1.1rem", fontWeight: 600, color: "var(--text-primary)", marginBottom: "16px" }}>
+                Where this answer came from
+              </h3>
+              
+              <div style={{
+                background: "rgba(10, 15, 29, 0.4)",
+                border: "1px solid var(--border-subtle)",
+                borderRadius: "var(--radius-md)",
+                padding: "20px",
+                marginBottom: "20px"
+              }}>
+                <div style={{ fontSize: "1.05rem", fontWeight: 600, color: "var(--accent-cyan)", marginBottom: "4px" }}>
+                  {trust.evidenceSnippets[0].documentTitle}
+                </div>
+                <div style={{ fontSize: "0.95rem", color: "var(--text-secondary)", marginBottom: "12px" }}>
+                  Page {trust.evidenceSnippets[0].pageNumber}
+                </div>
+                <div style={{ fontSize: "0.95rem", fontStyle: "italic", color: "var(--text-muted)" }}>
+                  "{trust.evidenceSnippets[0].text.substring(0, 100)}..."
+                </div>
+              </div>
 
-          {showTechnicalDetails && (
-            <>
-              {activeSession.calculation && (
-                <button
-                  onClick={() => setActiveTab("analysis")}
-                  className={`tab-item ${activeTab === "analysis" ? "active" : ""}`}
-                >
-                  Calculation Details
+              <div style={{ display: "flex", gap: "16px" }}>
+                <button onClick={() => openSnippetInspector(trust.evidenceSnippets[0])} className="btn btn-secondary">
+                  [ View source ]
                 </button>
-              )}
-              <button
-                onClick={() => setActiveTab("evidence")}
-                className={`tab-item ${activeTab === "evidence" ? "active" : ""}`}
-              >
-                Evidence
+                <button onClick={() => setShowTechnicalDetails(!showTechnicalDetails)} className="btn btn-secondary">
+                  {showTechnicalDetails ? "[ Hide calculation ]" : "[ Show calculation ]"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Technical Details / Calculation */}
+          {showTechnicalDetails && activeSession.calculation && (
+            <div style={{
+              background: "rgba(15, 23, 42, 0.6)",
+              border: "1px solid var(--border-subtle)",
+              borderRadius: "var(--radius-lg)",
+              padding: "24px",
+              marginTop: "20px"
+            }}>
+              <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "16px" }}>
+                Calculation details
+              </h3>
+              <div style={{ fontSize: "0.9rem", color: "var(--text-muted)", marginBottom: "8px" }}>
+                DuckDB query
+              </div>
+              <div style={{
+                background: "#0f172a",
+                padding: "16px",
+                borderRadius: "var(--radius-sm)",
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.85rem",
+                color: "var(--accent-cyan)",
+                marginBottom: "16px",
+                overflowX: "auto"
+              }}>
+                {activeSession.calculation.query}
+              </div>
+              <div style={{ fontSize: "0.95rem", color: "var(--text-secondary)", marginBottom: "20px" }}>
+                Rows checked: {activeSession.calculation.rowsScanned.toLocaleString()}
+              </div>
+              <button onClick={() => setShowTechnicalDetails(false)} className="btn btn-secondary" style={{ padding: "6px 12px", fontSize: "0.85rem" }}>
+                [ Hide details ]
               </button>
-              <button
-                onClick={() => setActiveTab("sources")}
-                className={`tab-item ${activeTab === "sources" ? "active" : ""}`}
-              >
-                Sources
-              </button>
-              <button
-                onClick={() => setActiveTab("limitations")}
-                className={`tab-item ${activeTab === "limitations" ? "active" : ""}`}
-              >
-                Limitations
-              </button>
-              <button
-                onClick={() => setActiveTab("model")}
-                className={`tab-item ${activeTab === "model" ? "active" : ""}`}
-              >
-                Model
-              </button>
-            </>
+            </div>
           )}
         </div>
+      )}
 
-        {/* 1. Answer Tab */}
-        {activeTab === "answer" && (
-          <div>
-            {/* Status & Latency Badges */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                marginBottom: "16px",
-                flexWrap: "wrap",
-                gap: "8px",
-              }}
-            >
-              <div
-                style={{ display: "flex", alignItems: "center", gap: "10px" }}
-              >
-                <span className="badge badge-emerald">
-                  <span className="badge-dot" /> Verified
-                </span>
-                <span
-                  className="badge badge-cyan"
-                  style={{ fontSize: "0.72rem" }}
-                >
-                  Status: Ready
-                </span>
-                <span
-                  style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}
-                >
-                  Latency: {activeSession.latencyMs}ms
-                </span>
-              </div>
-
-              <div
-                style={{ display: "flex", alignItems: "center", gap: "8px" }}
-              >
-                {trust.evidenceSnippets[0] && (
-                  <button
-                    onClick={() =>
-                      openSnippetInspector(trust.evidenceSnippets[0])
-                    }
-                    className="btn btn-secondary"
-                    style={{ fontSize: "0.78rem", padding: "6px 14px" }}
-                  >
-                    View source
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Synthesized Answer Box */}
-            <div
-              style={{
-                background: "rgba(10, 15, 29, 0.75)",
-                padding: "24px",
-                borderRadius: "var(--radius-md)",
-                border: "1px solid var(--border-subtle)",
-                lineHeight: 1.8,
-                fontSize: "1.08rem",
-                color: "var(--text-primary)",
-                marginBottom: "28px",
-                boxShadow: "inset 0 1px 3px rgba(0,0,0,0.5)",
-              }}
-            >
-              {trust.answer}
-            </div>
-
-            {/* Structured Analytical Chart Visualization (Stage 12) */}
-            {(activeSession.calculation?.chart || activeSession.chart) && (
-              <div style={{ marginBottom: "28px" }}>
-                <AnalyticalChart
-                  chart={
-                    activeSession.calculation?.chart || activeSession.chart
-                  }
-                  calculationTitle={activeSession.calculation?.tableName}
-                />
-              </div>
-            )}
-
-            {/* Quick Evidence & Sources Overview Grid */}
-            <div style={{ marginBottom: "24px" }}>
-              <div
-                style={{
-                  fontSize: "0.82rem",
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                  color: "var(--text-muted)",
-                  marginBottom: "12px",
-                }}
-              >
-                Where this answer came from
-              </div>
-
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-                  gap: "14px",
-                }}
-              >
-                {trust.evidenceSnippets.map((snip) => (
-                  <div
-                    key={snip.snippetId}
-                    onClick={() => openSnippetInspector(snip)}
-                    className="glass-card interactive-card"
-                    style={{
-                      padding: "16px 18px",
-                      cursor: "pointer",
-                      border: "1px solid rgba(6, 182, 212, 0.25)",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        marginBottom: "8px",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "0.85rem",
-                          fontWeight: 700,
-                          color: "var(--text-primary)",
-                        }}
-                      >
-                        {snip.documentTitle}
-                      </span>
-                      <span
-                        className="badge badge-cyan"
-                        style={{ fontSize: "0.68rem" }}
-                      >
-                        Page {snip.pageNumber}
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        fontSize: "0.82rem",
-                        color: "var(--text-secondary)",
-                        lineHeight: 1.55,
-                        fontStyle: "italic",
-                        marginBottom: "10px",
-                      }}
-                    >
-                      &ldquo;{snip.text.slice(0, 160)}...&rdquo;
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        fontSize: "0.74rem",
-                        color: "var(--text-muted)",
-                        borderTop: "1px solid rgba(255,255,255,0.06)",
-                        paddingTop: "8px",
-                      }}
-                    >
-                      <span>Source</span>
-                      <span
-                        style={{
-                          color: "var(--accent-emerald)",
-                          fontFamily: "var(--font-mono)",
-                        }}
-                      ></span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {showTechnicalDetails && (
-              <>
-                {/* Measured Confidence Explanation */}
-                <div
-                  style={{
-                    background: "rgba(15, 23, 42, 0.5)",
-                    border: "1px solid var(--border-subtle)",
-                    borderRadius: "var(--radius-md)",
-                    padding: "16px 20px",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                      marginBottom: "6px",
-                    }}
-                  >
-                    <span
-                      className="badge badge-emerald"
-                      style={{ fontSize: "0.68rem" }}
-                    >
-                      Empirical Confidence
-                    </span>
-                    <span
-                      style={{
-                        fontSize: "0.78rem",
-                        color: "var(--text-muted)",
-                      }}
-                    >
-                      Metric: {trust.confidence.scoreMetric}
-                    </span>
-                  </div>
-                  <p
-                    style={{
-                      fontSize: "0.85rem",
-                      color: "var(--text-secondary)",
-                      margin: 0,
-                      lineHeight: 1.6,
-                    }}
-                  >
-                    {trust.confidence.explanation}
-                  </p>
-                  <div
-                    style={{
-                      fontSize: "0.72rem",
-                      color: "var(--text-muted)",
-                      marginTop: "6px",
-                    }}
-                  >
-                    Policy: {trust.confidence.evaluationBasis}
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-        )}
-
-        {/* Analysis & Chart Tab (Stage 12) */}
-        {activeTab === "analysis" && activeSession.calculation && (
-          <div>
-            <div
-              style={{
-                marginBottom: "18px",
-                fontSize: "0.88rem",
-                color: "var(--text-secondary)",
-                lineHeight: 1.6,
-              }}
-            >
-              Verifiable columnar analytical calculation executed directly by
-              the in-memory DuckDB query engine, guaranteeing zero LLM
-              arithmetic hallucination.
-            </div>
-
-            <SqlTraceViewer calculation={activeSession.calculation} />
-          </div>
-        )}
-
-        {/* 2. Evidence Tab */}
-        {activeTab === "evidence" && (
-          <div>
-            <div
-              style={{
-                marginBottom: "18px",
-                fontSize: "0.88rem",
-                color: "var(--text-secondary)",
-                lineHeight: 1.6,
-              }}
-            >
-              Verbatim text snippets retrieved directly from indexed municipal
-              records backing this response. Click any snippet to open the
-              detailed provenance inspector.
-            </div>
-
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "16px" }}
-            >
-              {trust.evidenceSnippets.map((snip) => (
-                <div
-                  key={snip.snippetId}
-                  style={{
-                    background: "rgba(10, 15, 29, 0.6)",
-                    border: "1px solid var(--border-subtle)",
-                    borderRadius: "var(--radius-md)",
-                    padding: "20px",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      marginBottom: "12px",
-                      flexWrap: "wrap",
-                      gap: "8px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "10px",
-                      }}
-                    >
-                      <span
-                        className="badge badge-purple"
-                        style={{ fontSize: "0.72rem" }}
-                      >
-                        Source
-                      </span>
-                      <strong
-                        style={{
-                          fontSize: "0.95rem",
-                          color: "var(--accent-cyan)",
-                        }}
-                      >
-                        {snip.documentTitle}
-                      </strong>
-                    </div>
-
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
-                    >
-                      <span
-                        className="badge badge-cyan"
-                        style={{ fontSize: "0.72rem" }}
-                      >
-                        Page {snip.pageNumber}
-                      </span>
-                      <span
-                        style={{
-                          fontSize: "0.78rem",
-                          fontFamily: "var(--font-mono)",
-                          color: "var(--accent-emerald)",
-                        }}
-                      ></span>
-                      <button
-                        onClick={() => openSnippetInspector(snip)}
-                        className="btn btn-secondary"
-                        style={{ fontSize: "0.75rem", padding: "4px 10px" }}
-                      >
-                        View source
-                      </button>
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      background: "#080c16",
-                      border: "1px solid rgba(255, 255, 255, 0.06)",
-                      borderLeft: "3px solid var(--accent-cyan)",
-                      borderRadius: "var(--radius-sm)",
-                      padding: "16px",
-                      fontSize: "0.92rem",
-                      lineHeight: "1.7",
-                      color: "#e2e8f0",
-                      marginBottom: "12px",
-                    }}
-                  >
-                    &ldquo;{snip.text}&rdquo;
-                  </div>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      fontSize: "0.75rem",
-                      color: "var(--text-muted)",
-                      flexWrap: "wrap",
-                      gap: "8px",
-                    }}
-                  >
-                    <span>Chunk ID: {snip.snippetId}</span>
-                    {snip.department && (
-                      <span>Attribution: {snip.department}</span>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* 3. Sources Tab */}
-        {activeTab === "sources" && (
-          <div>
-            <div
-              style={{
-                marginBottom: "18px",
-                fontSize: "0.88rem",
-                color: "var(--text-secondary)",
-                lineHeight: 1.6,
-              }}
-            >
-              Source municipal documents referenced during question grounding,
-              with page citations and chunk volume:
-            </div>
-
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-                gap: "16px",
-              }}
-            >
-              {trust.sourceDocuments.map((doc) => (
-                <div
-                  key={doc.documentTitle}
-                  className="glass-card"
-                  style={{
-                    padding: "20px",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <div>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        marginBottom: "8px",
-                      }}
-                    >
-                      <span
-                        className="badge badge-cyan"
-                        style={{ fontSize: "0.68rem" }}
-                      >
-                        Official Record
-                      </span>
-                      <span
-                        style={{
-                          fontSize: "0.75rem",
-                          color: "var(--text-muted)",
-                        }}
-                      >
-                        {doc.chunkCount} chunk(s) cited
-                      </span>
-                    </div>
-
-                    <h4
-                      style={{
-                        fontSize: "1.02rem",
-                        fontWeight: 700,
-                        color: "var(--text-primary)",
-                        marginBottom: "6px",
-                      }}
-                    >
-                      {doc.documentTitle}
-                    </h4>
-
-                    {doc.department && (
-                      <div
-                        style={{
-                          fontSize: "0.8rem",
-                          color: "var(--text-secondary)",
-                          marginBottom: "12px",
-                        }}
-                      >
-                        Department: {doc.department}
-                      </div>
-                    )}
-
-                    <div style={{ marginBottom: "14px" }}>
-                      <span
-                        style={{
-                          fontSize: "0.75rem",
-                          color: "var(--text-muted)",
-                        }}
-                      >
-                        Cited Pages:
-                      </span>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexWrap: "wrap",
-                          gap: "6px",
-                          marginTop: "4px",
-                        }}
-                      >
-                        {doc.pageNumbers.map((p) => (
-                          <span
-                            key={p}
-                            className="badge badge-purple"
-                            style={{ fontSize: "0.72rem" }}
-                          >
-                            Page {p}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => openSourceInspector(doc)}
-                    className="btn btn-secondary"
-                    style={{ width: "100%", fontSize: "0.78rem" }}
-                  >
-                    View Source Citations
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* 4. Limitations Tab */}
-        {activeTab === "limitations" && (
-          <div>
-            <div
-              style={{
-                marginBottom: "18px",
-                fontSize: "0.88rem",
-                color: "var(--text-secondary)",
-                lineHeight: 1.6,
-              }}
-            >
-              Limitations:
-            </div>
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "12px" }}
-            >
-              <div
-                style={{
-                  background: "rgba(15, 23, 42, 0.6)",
-                  border: "1px solid var(--border-subtle)",
-                  borderRadius: "var(--radius-md)",
-                  padding: "16px 20px",
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: "0.88rem",
-                    color: "var(--text-primary)",
-                    lineHeight: 1.6,
-                  }}
-                >
-                  I could not find enough information in your uploaded documents
-                  to answer this question. You can try asking the question in a
-                  different way or upload another document.
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 5. Model Information Tab */}
-        {activeTab === "model" && (
-          <div>
-            <div
-              style={{
-                marginBottom: "18px",
-                fontSize: "0.88rem",
-                color: "var(--text-secondary)",
-                lineHeight: 1.6,
-              }}
-            >
-              Technical specifications, retrieval parameters, and genuine
-              measured confidence metrics:
-            </div>
-
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-                gap: "16px",
-                marginBottom: "24px",
-              }}
-            >
-              <div className="glass-card" style={{ padding: "18px 20px" }}>
-                <div
-                  style={{
-                    fontSize: "0.75rem",
-                    color: "var(--text-muted)",
-                    marginBottom: "4px",
-                  }}
-                >
-                  AI Model Identifier
-                </div>
-                <div
-                  style={{
-                    fontSize: "1.25rem",
-                    fontWeight: 700,
-                    color: "var(--accent-cyan)",
-                  }}
-                >
-                  {trust.modelIdentifier}
-                </div>
-                <div
-                  style={{
-                    fontSize: "0.72rem",
-                    color: "var(--text-secondary)",
-                    marginTop: "4px",
-                  }}
-                >
-                  Clean Provider Abstraction (Gemini API)
-                </div>
-              </div>
-
-              <div className="glass-card" style={{ padding: "18px 20px" }}>
-                <div
-                  style={{
-                    fontSize: "0.75rem",
-                    color: "var(--text-muted)",
-                    marginBottom: "4px",
-                  }}
-                >
-                  Retrieval Engine
-                </div>
-                <div
-                  style={{
-                    fontSize: "1.25rem",
-                    fontWeight: 700,
-                    color: "var(--accent-purple)",
-                  }}
-                >
-                  {trust.retrievalMetadata.vectorStore}
-                </div>
-                <div
-                  style={{
-                    fontSize: "0.72rem",
-                    color: "var(--text-secondary)",
-                    marginTop: "4px",
-                  }}
-                >
-                  Cosine Metric • Top-K: {trust.retrievalMetadata.topK}
-                </div>
-              </div>
-
-              <div className="glass-card" style={{ padding: "18px 20px" }}>
-                <div
-                  style={{
-                    fontSize: "0.75rem",
-                    color: "var(--text-muted)",
-                    marginBottom: "4px",
-                  }}
-                >
-                  Measured Mean Similarity
-                </div>
-                <div
-                  style={{
-                    fontSize: "1.25rem",
-                    fontWeight: 700,
-                    color: "var(--accent-emerald)",
-                    fontFamily: "var(--font-mono)",
-                  }}
-                >
-                  {trust.confidence.meanSimilarityScore !== undefined
-                    ? trust.confidence.meanSimilarityScore.toFixed(4)
-                    : "N/A"}
-                </div>
-                <div
-                  style={{
-                    fontSize: "0.72rem",
-                    color: "var(--text-secondary)",
-                    marginTop: "4px",
-                  }}
-                >
-                  Range: {trust.confidence.minSimilarityScore?.toFixed(4)} -{" "}
-                  {trust.confidence.maxSimilarityScore?.toFixed(4)}
-                </div>
-              </div>
-
-              <div className="glass-card" style={{ padding: "18px 20px" }}>
-                <div
-                  style={{
-                    fontSize: "0.75rem",
-                    color: "var(--text-muted)",
-                    marginBottom: "4px",
-                  }}
-                >
-                  Verifiability Level
-                </div>
-                <div
-                  style={{
-                    fontSize: "1.25rem",
-                    fontWeight: 700,
-                    color: "var(--accent-emerald)",
-                  }}
-                >
-                  {trust.confidence.verifiabilityRating.toUpperCase()}
-                </div>
-                <div
-                  style={{
-                    fontSize: "0.72rem",
-                    color: "var(--text-secondary)",
-                    marginTop: "4px",
-                  }}
-                >
-                  {trust.confidence.evidenceCount} supporting chunk(s)
-                </div>
-              </div>
-            </div>
-
-            {/* Empirical Grounding Note */}
-            <div
-              style={{
-                background: "rgba(15, 23, 42, 0.6)",
-                border: "1px solid var(--border-subtle)",
-                borderRadius: "var(--radius-md)",
-                padding: "18px 22px",
-              }}
-            >
-              <h5
-                style={{
-                  fontSize: "0.85rem",
-                  fontWeight: 700,
-                  color: "var(--text-primary)",
-                  marginBottom: "6px",
-                }}
-              >
-                Zero Synthetic Scores Policy
-              </h5>
-              <p
-                style={{
-                  fontSize: "0.82rem",
-                  color: "var(--text-secondary)",
-                  lineHeight: 1.6,
-                  margin: 0,
-                }}
-              >
-                {trust.confidence.evaluationBasis}. Unlike typical AI demos,
-                OpenCitizen AI strictly avoids generating fake statistical
-                confidence percentages (such as &ldquo;98.7% confident&rdquo;)
-                to make the interface look impressive. All figures represent
-                authentic vector cosine similarity and verifiable page
-                boundaries.
-              </p>
-            </div>
-          </div>
-        )}
-      </section>
-
-      {/* Provenance & Evidence Inspection Drawer */}
+      {/* Inspection Drawer (Kept intact to not throw functionality away) */}
       <InspectionDrawer
         isOpen={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         snippet={activeSnippet}
         sourceDoc={activeSourceDoc}
-        modelIdentifier={trust.modelIdentifier}
+        modelIdentifier={trust?.modelIdentifier || ""}
       />
     </div>
   );

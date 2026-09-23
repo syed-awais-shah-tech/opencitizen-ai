@@ -1,174 +1,95 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
-import DocumentCard from "./components/DocumentCard";
-import DatasetCard from "./components/DatasetCard";
-import InspectionDrawer from "./components/InspectionDrawer";
-import {
-  MOCK_DOCUMENTS,
-  MOCK_DATASETS,
-  MOCK_QUERY_SESSIONS,
-  PRESET_QUESTIONS,
-  CitationData,
-  CalculationData,
-} from "./lib/mockData";
 
 export default function HomePage() {
-  const activeSession = MOCK_QUERY_SESSIONS[0];
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [drawerTab, setDrawerTab] = useState<"citation" | "calculation">("citation");
-  const [activeCitation, setActiveCitation] = useState<CitationData | undefined>(activeSession.citations[0]);
-  const [activeCalculation, setActiveCalculation] = useState<CalculationData | undefined>(activeSession.calculation);
-
   return (
-    <div>
-      {/* What is OpenCitizen AI? */}
-      <section style={{ marginBottom: "36px" }}>
+    <div style={{ maxWidth: "800px", margin: "0 auto", padding: "40px 20px" }}>
+      {/* Hero Section */}
+      <section style={{ textAlign: "center", marginBottom: "60px" }}>
+        <h2 style={{ fontSize: "1rem", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "12px" }}>
+          Home
+        </h2>
         <h1 style={{
-          fontSize: "2.2rem",
+          fontSize: "3rem",
           fontWeight: 800,
-          lineHeight: 1.2,
+          lineHeight: 1.1,
           letterSpacing: "-0.03em",
           color: "var(--text-primary)",
-          marginBottom: "16px",
+          marginBottom: "24px",
         }}>
-          What is OpenCitizen AI?
+          OPEN CITIZEN AI
         </h1>
         <p style={{
-          fontSize: "1.05rem",
+          fontSize: "1.2rem",
+          color: "var(--text-secondary)",
+          fontWeight: 500,
+          marginBottom: "16px",
+        }}>
+          Understand public information
+        </p>
+        <p style={{
+          fontSize: "1rem",
           color: "var(--text-secondary)",
           lineHeight: 1.6,
-          maxWidth: "700px",
+          marginBottom: "40px",
         }}>
-          OpenCitizen AI helps you understand public documents and datasets. 
-          Ask questions and see the sources behind the answers.
+          Upload a document or dataset.<br/>
+          Ask a question.<br/>
+          See the answer and where it came from.
         </p>
+
+        <div style={{ display: "flex", justifyContent: "center", gap: "20px", flexWrap: "wrap" }}>
+          <Link href="/documents" className="btn btn-primary" style={{ padding: "12px 24px", fontSize: "1.05rem" }}>
+            [ Upload a document ]
+          </Link>
+          <Link href="/query" className="btn btn-secondary" style={{ padding: "12px 24px", fontSize: "1.05rem" }}>
+            [ Ask a question ]
+          </Link>
+        </div>
       </section>
 
-      {/* How it works */}
-      <section style={{ marginBottom: "36px" }}>
-        <h2 style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "20px" }}>
+      {/* How it works Section */}
+      <section style={{ 
+        background: "rgba(10, 15, 29, 0.4)", 
+        border: "1px solid var(--border-subtle)", 
+        borderRadius: "var(--radius-lg)", 
+        padding: "40px",
+      }}>
+        <h2 style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "32px", textAlign: "center" }}>
           How it works
         </h2>
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-          gap: "16px",
-        }}>
-          <Link href="/documents" style={{ textDecoration: "none" }}>
-            <div className="glass-card interactive-card" style={{ padding: "24px", height: "100%" }}>
-              <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--accent-cyan)", marginBottom: "8px" }}>
-                1. Upload
-              </h3>
-              <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
-                Add a public report, budget, or dataset.
-              </p>
+        
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "30px" }}>
+          <div style={{ textAlign: "center" }}>
+            <div style={{ fontSize: "1.2rem", fontWeight: 700, color: "var(--accent-cyan)", marginBottom: "12px" }}>
+              ① Upload
             </div>
-          </Link>
-
-          <Link href="/query" style={{ textDecoration: "none" }}>
-            <div className="glass-card interactive-card" style={{ padding: "24px", height: "100%" }}>
-              <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--accent-emerald)", marginBottom: "8px" }}>
-                2. Ask
-              </h3>
-              <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
-                Ask a question about your documents in plain English.
-              </p>
-            </div>
-          </Link>
-
-          <Link href="/query" style={{ textDecoration: "none" }}>
-            <div className="glass-card interactive-card" style={{ padding: "24px", height: "100%" }}>
-              <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--accent-purple)", marginBottom: "8px" }}>
-                3. Check the source
-              </h3>
-              <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
-                See exactly which document and page the answer came from.
-              </p>
-            </div>
-          </Link>
-        </div>
-      </section>
-
-      {/* What can you ask? */}
-      <section style={{ marginBottom: "48px" }}>
-        <h2 style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "20px" }}>
-          What can you ask?
-        </h2>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
-          {PRESET_QUESTIONS.slice(0, 6).map((q) => (
-            <Link key={q} href="/query" style={{ textDecoration: "none" }}>
-              <div
-                className="glass-card interactive-card"
-                style={{
-                  padding: "14px 20px",
-                  fontSize: "0.95rem",
-                  color: "var(--text-primary)",
-                  border: "1px solid var(--border-subtle)",
-                }}
-              >
-                {q}
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* What documents are available? */}
-      <section style={{ marginBottom: "36px" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
-          <h2 style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--text-primary)" }}>
-            What documents are available?
-          </h2>
-          <div style={{ display: "flex", gap: "16px" }}>
-            <Link href="/documents" className="btn btn-secondary" style={{ fontSize: "0.9rem" }}>
-              View all documents
-            </Link>
-            <Link href="/datasets" className="btn btn-secondary" style={{ fontSize: "0.9rem" }}>
-              View all data
-            </Link>
-          </div>
-        </div>
-
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(420px, 1fr))",
-          gap: "24px",
-        }}>
-          <div className="glass-card" style={{ padding: "22px" }}>
-            <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "16px" }}>
-              Recent Documents
-            </h3>
-            <div>
-              {MOCK_DOCUMENTS.slice(0, 3).map((doc) => (
-                <DocumentCard key={doc.id} doc={doc} />
-              ))}
-            </div>
+            <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
+              Add a document or dataset.
+            </p>
           </div>
 
-          <div className="glass-card" style={{ padding: "22px" }}>
-            <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "16px" }}>
-              Recent Data
-            </h3>
-            <div>
-              {MOCK_DATASETS.slice(0, 3).map((dataset) => (
-                <DatasetCard key={dataset.id} dataset={dataset} />
-              ))}
+          <div style={{ textAlign: "center" }}>
+            <div style={{ fontSize: "1.2rem", fontWeight: 700, color: "var(--accent-emerald)", marginBottom: "12px" }}>
+              ② Ask
             </div>
+            <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
+              Ask your question in simple words.
+            </p>
+          </div>
+
+          <div style={{ textAlign: "center" }}>
+            <div style={{ fontSize: "1.2rem", fontWeight: 700, color: "var(--accent-purple)", marginBottom: "12px" }}>
+              ③ Check
+            </div>
+            <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
+              See the answer and the source.
+            </p>
           </div>
         </div>
       </section>
-
-      {/* Inspection Drawer (Kept for advanced view) */}
-      <InspectionDrawer
-        isOpen={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        tab={drawerTab}
-        onTabChange={setDrawerTab}
-        citation={activeCitation}
-        calculation={activeCalculation}
-      />
     </div>
   );
 }
