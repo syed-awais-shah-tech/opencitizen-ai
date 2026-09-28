@@ -367,7 +367,7 @@ export default function QueryPage() {
                 Calculation details
               </h3>
               <div style={{ fontSize: "0.9rem", color: "var(--text-muted)", marginBottom: "8px" }}>
-                DuckDB query
+                Data calculation
               </div>
               <div style={{
                 background: "#0f172a",

@@ -50,12 +50,29 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* What is OpenCitizen AI? Section */}
+      <section style={{
+        background: "rgba(10, 15, 29, 0.4)",
+        border: "1px solid var(--border-subtle)",
+        borderRadius: "var(--radius-lg)",
+        padding: "40px",
+        marginBottom: "30px"
+      }}>
+        <h2 style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "16px" }}>
+          What is OpenCitizen AI?
+        </h2>
+        <p style={{ fontSize: "1.1rem", color: "var(--text-secondary)", lineHeight: 1.6 }}>
+          OpenCitizen AI helps you understand public documents and datasets. Ask questions and see the sources behind the answers.
+        </p>
+      </section>
+
       {/* How it works Section */}
       <section style={{ 
         background: "rgba(10, 15, 29, 0.4)", 
         border: "1px solid var(--border-subtle)", 
         borderRadius: "var(--radius-lg)", 
         padding: "40px",
+        marginBottom: "30px"
       }}>
         <h2 style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "32px", textAlign: "center" }}>
           How it works
@@ -64,7 +81,7 @@ export default function HomePage() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "30px" }}>
           <div style={{ textAlign: "center" }}>
             <div style={{ fontSize: "1.2rem", fontWeight: 700, color: "var(--accent-cyan)", marginBottom: "12px" }}>
-              ① Upload
+              1. Upload
             </div>
             <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
               Add a document or dataset.
@@ -73,7 +90,7 @@ export default function HomePage() {
 
           <div style={{ textAlign: "center" }}>
             <div style={{ fontSize: "1.2rem", fontWeight: 700, color: "var(--accent-emerald)", marginBottom: "12px" }}>
-              ② Ask
+              2. Ask
             </div>
             <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
               Ask your question in simple words.
@@ -82,7 +99,7 @@ export default function HomePage() {
 
           <div style={{ textAlign: "center" }}>
             <div style={{ fontSize: "1.2rem", fontWeight: 700, color: "var(--accent-purple)", marginBottom: "12px" }}>
-              ③ Check
+              3. Check the source
             </div>
             <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
               See the answer and the source.
@@ -90,6 +107,45 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* What can you ask? Section */}
+      <section style={{
+        background: "rgba(10, 15, 29, 0.4)",
+        border: "1px solid var(--border-subtle)",
+        borderRadius: "var(--radius-lg)",
+        padding: "40px",
+        marginBottom: "30px"
+      }}>
+        <h2 style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "24px" }}>
+          What can you ask?
+        </h2>
+        <ul style={{ fontSize: "1.05rem", color: "var(--text-secondary)", lineHeight: 1.8, paddingLeft: "20px" }}>
+          <li>What does this report say about housing?</li>
+          <li>How much money was spent on public transport?</li>
+          <li>What projects are planned for next year?</li>
+          <li>What changed between these two years?</li>
+          <li>What are the main findings in the budget?</li>
+        </ul>
+      </section>
+
+      {/* What documents are available? Section */}
+      <section style={{
+        background: "rgba(10, 15, 29, 0.4)",
+        border: "1px solid var(--border-subtle)",
+        borderRadius: "var(--radius-lg)",
+        padding: "40px"
+      }}>
+        <h2 style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "16px" }}>
+          What documents are available?
+        </h2>
+        <p style={{ fontSize: "1.05rem", color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: "16px" }}>
+          You can upload and ask questions about public reports, budgets, planning datasets, and other public information.
+        </p>
+        <Link href="/documents" className="btn btn-secondary" style={{ padding: "8px 16px", fontSize: "0.95rem" }}>
+          [ View your documents ]
+        </Link>
+      </section>
+
     </div>
   );
 }

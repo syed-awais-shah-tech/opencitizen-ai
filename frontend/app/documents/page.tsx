@@ -262,10 +262,10 @@ export default function DocumentsPage() {
     const getStageLabel = (stage: string) => {
     switch (stage) {
       case "queued": return "Waiting to be prepared";
-      case "extraction": return "Step 1: Uploading your file";
-      case "chunking": return "Step 2: Reading the document";
-      case "embedding": return "Step 3: Preparing it for questions";
-      case "vector_storage": return "Step 3: Preparing it for questions";
+      case "extraction": return "Uploading";
+      case "chunking": return "Reading";
+      case "embedding": return "Preparing";
+      case "vector_storage": return "Preparing";
       case "completed": return "Ready";
       case "failed": return "Could not process";
       default: return stage;

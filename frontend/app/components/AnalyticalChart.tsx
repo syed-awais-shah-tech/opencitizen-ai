@@ -226,10 +226,10 @@ export default function AnalyticalChart({
           No Analytical Data Points Found
         </h4>
         <p style={{ fontSize: "0.82rem", color: "var(--text-secondary)", maxWidth: "460px", margin: "0 auto 10px auto", lineHeight: 1.5 }}>
-          {errorMessage || "The underlying DuckDB query executed successfully but produced 0 records matching the requested filter boundaries."}
+          {errorMessage || "The underlying query executed successfully but produced 0 records matching the requested filter boundaries."}
         </p>
         <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
-          Provenance Guarantee: Charts are strictly generated from real records — zero synthetic dummy data is ever rendered.
+          How this chart was created: Based on your dataset.
         </div>
       </div>
     );
@@ -571,7 +571,7 @@ export default function AnalyticalChart({
       >
         <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           <span className="badge-dot" style={{ background: "var(--accent-emerald)" }} />
-          Zero Synthetic Chart Policy: Derived solely from DuckDB execution results
+          Based on your dataset
         </span>
         <span>Records Plotted: {data.length}</span>
       </div>
